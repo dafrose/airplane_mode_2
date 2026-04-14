@@ -1,10 +1,16 @@
 # Copyright (c) 2026, ALYF and contributors
 # For license information, please see license.txt
 
+import random
+
 import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt
+
+
+def generate_seat_assignment() -> str:
+    return f"{random.randint(1, 99)}{random.choice('ABCDE')}"
 
 
 class AirplaneTicket(Document):
@@ -21,17 +27,20 @@ class AirplaneTicket(Document):
         amended_from: DF.Link | None
         departure_date: DF.Date
         departure_time: DF.Time
-        destination_airport: DF.Link
         destination_airport_code: DF.ReadOnly
         duration_of_flight: DF.Duration
         flight: DF.Link
         flight_price: DF.Currency
         passenger: DF.Link
-        source_airport: DF.Link
+        seat: DF.Data | None
         source_airport_code: DF.ReadOnly
         status: DF.Literal["Booked", "Checked-In", "Boarded"]
         total_price: DF.Currency
     # end: auto-generated types
+
+    def before_insert(self):
+        if not self.seat:
+            self.seat = generate_seat_assignment()
 
     def validate(self):
         self._dedupe_add_ons()
