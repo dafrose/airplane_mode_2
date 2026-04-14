@@ -1,7 +1,6 @@
 # Copyright (c) 2026, ALYF and contributors
 # For license information, please see license.txt
 
-# import frappe
 from frappe.model.document import Document
 
 
@@ -25,4 +24,6 @@ class AirplaneFlight(Document):
 		status: DF.Literal["Scheduled", "Completed", "Cancelled"]
 		time_of_departure: DF.Time
 	# end: auto-generated types
-	pass
+
+	def on_submit(self):
+		self.db_set("status", "Completed")
