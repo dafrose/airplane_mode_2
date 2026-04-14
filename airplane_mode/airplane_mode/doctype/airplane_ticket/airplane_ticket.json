@@ -24,7 +24,11 @@
   "section_break_xtkz",
   "status",
   "column_break_dcka",
-  "amended_from"
+  "amended_from",
+  "section_break_jwpr",
+  "add_ons",
+  "flight_price",
+  "total_price"
  ],
  "fields": [
   {
@@ -141,13 +145,35 @@
   {
    "fieldname": "column_break_dcka",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "add_ons",
+   "fieldtype": "Table",
+   "label": "Add Ons",
+   "options": "Airplane Ticket Add-on Item"
+  },
+  {
+   "fieldname": "section_break_jwpr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "flight_price",
+   "fieldtype": "Currency",
+   "label": "Flight Price",
+   "reqd": 1
+  },
+  {
+   "fieldname": "total_price",
+   "fieldtype": "Currency",
+   "label": "Total Price",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-04-10 09:38:43.172856",
+ "modified": "2026-04-14 14:56:10.454205",
  "modified_by": "Administrator",
  "module": "Airplane Mode",
  "name": "Airplane Ticket",
