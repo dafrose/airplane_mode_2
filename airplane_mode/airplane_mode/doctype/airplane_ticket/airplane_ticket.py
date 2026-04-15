@@ -10,75 +10,77 @@ from frappe.utils import flt
 
 
 def generate_seat_assignment() -> str:
-    return f"{random.randint(1, 99)}{random.choice('ABCDE')}"
+	return f"{random.randint(1, 99)}{random.choice('ABCDE')}"
 
 
 class AirplaneTicket(Document):
-    # begin: auto-generated types
-    # This code is auto-generated. Do not modify anything in this block.
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
 
-    from typing import TYPE_CHECKING
+	from typing import TYPE_CHECKING
 
-    if TYPE_CHECKING:
-        from airplane_mode.airplane_mode.doctype.airplane_ticket_add_on_item.airplane_ticket_add_on_item import AirplaneTicketAddonItem
-        from frappe.types import DF
+	if TYPE_CHECKING:
+		from frappe.types import DF
 
-        add_ons: DF.Table[AirplaneTicketAddonItem]
-        amended_from: DF.Link | None
-        departure_date: DF.Date
-        departure_time: DF.Time
-        destination_airport_code: DF.ReadOnly
-        duration_of_flight: DF.Duration
-        flight: DF.Link
-        flight_price: DF.Currency
-        passenger: DF.Link
-        seat: DF.Data | None
-        source_airport_code: DF.ReadOnly
-        status: DF.Literal["Booked", "Checked-In", "Boarded"]
-        total_price: DF.Currency
-    # end: auto-generated types
+		from airplane_mode.airplane_mode.doctype.airplane_ticket_add_on_item.airplane_ticket_add_on_item import (
+			AirplaneTicketAddonItem,
+		)
 
-    def before_insert(self):
-        if not self.seat:
-            self.seat = generate_seat_assignment()
+		add_ons: DF.Table[AirplaneTicketAddonItem]
+		amended_from: DF.Link | None
+		departure_date: DF.Date
+		departure_time: DF.Time
+		destination_airport_code: DF.ReadOnly
+		duration_of_flight: DF.Duration
+		flight: DF.Link
+		flight_price: DF.Currency
+		passenger: DF.Link
+		seat: DF.Data | None
+		source_airport_code: DF.ReadOnly
+		status: DF.Literal["Booked", "Checked-In", "Boarded"]
+		total_amount: DF.Currency
+	# end: auto-generated types
 
-    def validate(self):
-        self._dedupe_add_ons()
-        addon_total = sum(flt(row.amount) for row in self.add_ons)
-        self.total_price = flt(self.flight_price) + addon_total
+	def before_insert(self):
+		if not self.seat:
+			self.seat = generate_seat_assignment()
 
-    def on_submit(self):
-        if self.status != "Boarded":
-            frappe.throw(
-                _("Only tickets with status {0} can be submitted.")
-                .format(frappe.bold("Boarded")),
-                title=_("Cannot Submit"),
-            )
+	def validate(self):
+		self._dedupe_add_ons()
+		addon_total = sum(flt(row.amount) for row in self.add_ons)
+		self.total_amount = flt(self.flight_price) + addon_total
 
-    def _dedupe_add_ons(self):
-        """Remove duplicate add-ons from the list."""
-        if not self.add_ons:
-            return
+	def on_submit(self):
+		if self.status != "Boarded":
+			frappe.throw(
+				_("Only tickets with status {0} can be submitted.").format(frappe.bold("Boarded")),
+				title=_("Cannot Submit"),
+			)
 
-        seen = set()
-        rows_to_remove = []
-        for row in self.add_ons:
-            if row.item in seen:
-                rows_to_remove.append(row)
-            else:
-                seen.add(row.item)
+	def _dedupe_add_ons(self):
+		"""Remove duplicate add-ons from the list."""
+		if not self.add_ons:
+			return
 
-        if not rows_to_remove:
-            return
+		seen = set()
+		rows_to_remove = []
+		for row in self.add_ons:
+			if row.item in seen:
+				rows_to_remove.append(row)
+			else:
+				seen.add(row.item)
 
-        for row in rows_to_remove:
-            self.remove(row)
+		if not rows_to_remove:
+			return
 
-        frappe.msgprint(
-            _("Removed {0} duplicate add-on row(s). Each add-on type can only appear once.").format(
-                len(rows_to_remove)
-            ),
-            title=_("Duplicate add-ons"),
-            indicator="orange",
-            alert=True,
-        )
+		for row in rows_to_remove:
+			self.remove(row)
+
+		frappe.msgprint(
+			_("Removed {0} duplicate add-on row(s). Each add-on type can only appear once.").format(
+				len(rows_to_remove)
+			),
+			title=_("Duplicate add-ons"),
+			indicator="orange",
+			alert=True,
+		)

@@ -21,7 +21,7 @@
   "section_break_qylk",
   "flight_price",
   "column_break_zwgz",
-  "total_price",
+  "total_amount",
   "departure_details_section",
   "departure_date",
   "departure_time",
@@ -149,12 +149,6 @@
    "reqd": 1
   },
   {
-   "fieldname": "total_price",
-   "fieldtype": "Currency",
-   "label": "Total Price",
-   "read_only": 1
-  },
-  {
    "fieldname": "seat",
    "fieldtype": "Data",
    "label": "Seat",
@@ -171,13 +165,19 @@
   {
    "fieldname": "column_break_zwgz",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-04-14 16:03:57.503782",
+ "modified": "2026-04-15 12:37:47.748120",
  "modified_by": "Administrator",
  "module": "Airplane Mode",
  "name": "Airplane Ticket",
