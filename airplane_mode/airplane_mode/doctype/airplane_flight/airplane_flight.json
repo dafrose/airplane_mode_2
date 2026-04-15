@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_guest_to_view": 1,
  "allow_rename": 1,
  "autoname": "{airplane}.-.MM.-.YYYY.-.#####",
  "creation": "2026-04-14 15:38:57.702761",
@@ -21,7 +22,10 @@
   "date_of_departure",
   "time_of_departure",
   "column_break_kygz",
-  "duration"
+  "duration",
+  "section_break_bnmh",
+  "is_published",
+  "route"
  ],
  "fields": [
   {
@@ -120,10 +124,28 @@
   {
    "fieldname": "column_break_kygz",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_bnmh",
+   "fieldtype": "Section Break",
+   "label": "Web View Properties"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_published",
+   "fieldtype": "Check",
+   "label": "Is Published?"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route"
   }
  ],
  "grid_page_length": 50,
+ "has_web_view": 1,
  "index_web_pages_for_search": 1,
+ "is_published_field": "is_published",
  "is_submittable": 1,
  "links": [
   {
@@ -131,7 +153,7 @@
    "link_fieldname": "flight"
   }
  ],
- "modified": "2026-04-14 16:00:17.222726",
+ "modified": "2026-04-15 10:58:50.592880",
  "modified_by": "Administrator",
  "module": "Airplane Mode",
  "name": "Airplane Flight",
@@ -152,6 +174,7 @@
    "write": 1
   }
  ],
+ "route": "flights",
  "row_format": "Dynamic",
  "rows_threshold_for_grid_search": 20,
  "sort_field": "modified",
