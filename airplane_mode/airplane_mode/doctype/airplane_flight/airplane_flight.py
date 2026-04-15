@@ -6,6 +6,9 @@ from frappe import _
 from frappe.utils.data import quoted
 from frappe.website.website_generator import WebsiteGenerator
 
+# Must match Web Form > Route (see book_flight_ticket_web_form.json)
+BOOK_FLIGHT_WEB_FORM_ROUTE = "book-flight-ticket-web-form"
+
 
 class AirplaneFlight(WebsiteGenerator):
 	# begin: auto-generated types
@@ -33,7 +36,7 @@ class AirplaneFlight(WebsiteGenerator):
 	def get_context(self, context):
 		airline = frappe.db.get_value("Airplane", self.airplane, "airline")
 		context.title = f"{airline} — {self.source_airport_code} → {self.destination_airport_code}"
-		context.book_flight_url = f"/book-flight-ticket/new?flight={quoted(self.name)}"
+		context.book_flight_url = f"/{BOOK_FLIGHT_WEB_FORM_ROUTE}/new?flight={quoted(self.name)}"
 		return context
 
 	def on_submit(self):
