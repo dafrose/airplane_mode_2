@@ -1,1 +1,1 @@
-Add your message here
+Your flight departs tomorrow!
