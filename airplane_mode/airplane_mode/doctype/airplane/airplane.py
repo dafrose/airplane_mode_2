@@ -16,6 +16,7 @@ class Airplane(Document):
 
 		airline: DF.Link
 		capacity: DF.Int
+		initial_audit_completed: DF.Check
 		model: DF.Data
 	# end: auto-generated types
 	pass
