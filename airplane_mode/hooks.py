@@ -1,7 +1,7 @@
 app_name = "airplane_mode"
 app_title = "Airplane Mode"
 app_publisher = "ALYF"
-app_description = "Airline Ticketing System for Assignment Day 1 Frappe Full-Stack-Course"
+app_description = "Airline Ticketing System for Assignments of the Frappe Full-Stack-Course"
 app_email = "daniel@alyf.de"
 app_license = "mit"
 
@@ -246,4 +246,3 @@ export_python_type_annotations = True
 # ------------
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
-

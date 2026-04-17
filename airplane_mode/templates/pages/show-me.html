@@ -1,15 +1,10 @@
-<!-- no-cache -->
-{% extends "templates/web.html" %}
-
-{% set title = _("Show Me Colors") %}
-
-{% block page_content %}
-{% set color = frappe.form_dict.get("color") or "black" %}
-<div class="show-me-colors">
-	<div
-		class="show-me-colors__rect"
-		style="width: 100%; max-width: 36rem; height: 12rem; margin: 0 auto; background-color: {{ color | e }};"
-		aria-label="{{ _('Color swatch') }}"
-	></div>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Show me</title>
+</head>
+<body>
+    <div style="height: 500px; width: 1000px; background-color: {{frappe.form_dict.color or "black"}};">
+    </div>
+</body>
+</html>
