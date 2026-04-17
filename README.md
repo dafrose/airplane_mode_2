@@ -1,41 +1,61 @@
-### Airplane Mode
+# Airplane Mode
 
-Airline Ticketing System for Assignment Day 1 Frappe Full-Stack-Course
+**Airplane Mode** is a small airline ticketing app for the [Frappe](https://frappeframework.com/) Full-Stack Course. It models airlines, airports, aircraft, flights, passengers, and bookable tickets with optional add-ons.
 
-### Installation
+## Features
 
-You can install this app using the [bench](https://github.com/frappe/bench) CLI:
+- **Master data**: **Airline**, **Airport**, **Airplane**
+- **Operations**: **Airplane Flight** (includes a website detail view)
+- **Passengers**: **Flight Passenger**
+- **Sales**: **Airplane Ticket** with line items (**Airplane Ticket Add-on Item**) and configurable **Airplane Ticket Add-on Type** records
+
+## Requirements
+
+- Python 3.10+
+- [Frappe](https://github.com/frappe/frappe) v15 (installed via [bench](https://github.com/frappe/bench))
+
+## Installation
+
+Install the app with [bench](https://github.com/frappe/bench):
 
 ```bash
-cd $PATH_TO_YOUR_BENCH
-bench get-app $URL_OF_THIS_REPO --branch develop
+cd /path/to/your-bench
+bench get-app <repository-url> --branch develop
 bench install-app airplane_mode
 ```
 
-### Contributing
+Replace `<repository-url>` with this repository’s clone URL and adjust `--branch` if you use another default branch.
 
-This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:
+## Development
+
+### Tests
+
+From your bench directory, with a site that has the app installed:
+
+```bash
+bench --site <site-name> set-config allow_tests true
+bench --site <site-name> run-tests --app airplane_mode
+```
+
+### Code quality
+
+This repo uses **pre-commit** (ruff, ESLint, Prettier, pyupgrade). Enable it locally:
 
 ```bash
 cd apps/airplane_mode
 pre-commit install
 ```
 
-Pre-commit is configured to use the following tools for checking and formatting your code:
+## CI
 
-- ruff
-- eslint
-- prettier
-- pyupgrade
+GitHub Actions workflows in `.github/workflows/`:
 
-### CI
+| Workflow | Purpose |
+| -------- | ------- |
+| **CI** | On pushes to `develop` and on pull requests: provision bench, install the app, build assets, run unit tests. |
+| **Tests** | On `main` and `develop` (push and PR): full test run in a bench environment. |
+| **Linters** | On pull requests: pre-commit; [Frappe Semgrep rules](https://github.com/frappe/semgrep-rules) and Python checks via Semgrep; [pip-audit](https://pypi.org/project/pip-audit/) for dependency vulnerabilities. |
 
-This app can use GitHub Actions for CI. The following workflows are configured:
+## License
 
-- CI: Installs this app and runs unit tests on every push to `develop` branch.
-- Linters: Runs [Frappe Semgrep Rules](https://github.com/frappe/semgrep-rules) and [pip-audit](https://pypi.org/project/pip-audit/) on every pull request.
-
-
-### License
-
-mit
+MIT — see [license.txt](license.txt).
