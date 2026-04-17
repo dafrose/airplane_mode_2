@@ -6,7 +6,7 @@ import random
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import flt
+from frappe.utils import cint, flt
 
 
 def generate_seat_assignment() -> str:
@@ -47,6 +47,7 @@ class AirplaneTicket(Document):
 
 	def validate(self):
 		self._dedupe_add_ons()
+		self._validate_flight_capacity()
 		addon_total = sum(flt(row.amount) for row in self.add_ons)
 		self.total_amount = flt(self.flight_price) + addon_total
 
@@ -55,6 +56,23 @@ class AirplaneTicket(Document):
 			frappe.throw(
 				_("Only tickets with status {0} can be submitted.").format(frappe.bold("Boarded")),
 				title=_("Cannot Submit"),
+			)
+
+	def _validate_flight_capacity(self):
+		airplane = frappe.db.get_value("Airplane Flight", self.flight, "airplane")
+		capacity = cint(frappe.db.get_value("Airplane", airplane, "capacity"))
+
+		filters = {"flight": self.flight, "docstatus": ("!=", 2)}
+		if not self.is_new():
+			filters["name"] = ("!=", self.name)
+
+		existing = frappe.db.count("Airplane Ticket", filters)
+		if existing >= capacity:
+			frappe.throw(
+				_(
+					"This flight is fully booked. The airplane has {0} seat(s), and there are already {1} ticket(s) booked for this flight."
+				).format(capacity, existing),
+				title=_("Flight full"),
 			)
 
 	def _dedupe_add_ons(self):

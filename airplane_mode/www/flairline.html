@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Flairline — Beyond Earth</title>
+	<style>
+		:root {
+			--bg: #0d1117;
+			--surface: #161b22;
+			--accent: #f97316;
+			--accent-soft: rgba(249, 115, 22, 0.15);
+			--text: #e6edf3;
+			--muted: #8b949e;
+			--mars: #c2410c;
+		}
+		* { box-sizing: border-box; }
+		body {
+			margin: 0;
+			min-height: 100vh;
+			font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+			background: var(--bg);
+			color: var(--text);
+			line-height: 1.6;
+		}
+		.stars {
+			position: fixed;
+			inset: 0;
+			background-image:
+				radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.4) 0, transparent 0),
+				radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.25) 0, transparent 0),
+				radial-gradient(1px 1px at 80% 20%, rgba(255,255,255,0.35) 0, transparent 0),
+				radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.2) 0, transparent 0);
+			background-size: 100% 100%;
+			pointer-events: none;
+			z-index: 0;
+		}
+		.wrap {
+			position: relative;
+			z-index: 1;
+			max-width: 42rem;
+			margin: 0 auto;
+			padding: 3rem 1.5rem 4rem;
+		}
+		.logo {
+			display: block;
+			width: min(200px, 48vw);
+			height: auto;
+			margin: 0 0 1.25rem;
+			border-radius: 1rem;
+			border: 1px solid rgba(255,255,255,0.12);
+			box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+		}
+		.badge {
+			display: inline-block;
+			font-size: 0.75rem;
+			letter-spacing: 0.12em;
+			text-transform: uppercase;
+			color: var(--accent);
+			border: 1px solid var(--accent-soft);
+			background: var(--accent-soft);
+			padding: 0.35rem 0.75rem;
+			border-radius: 999px;
+			margin-bottom: 1.25rem;
+		}
+		h1 {
+			font-size: clamp(2.25rem, 6vw, 3rem);
+			font-weight: 700;
+			letter-spacing: -0.03em;
+			margin: 0 0 0.5rem;
+			background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-clip: text;
+		}
+		.tagline {
+			font-size: 1.125rem;
+			color: var(--muted);
+			margin: 0 0 2rem;
+		}
+		.card {
+			background: var(--surface);
+			border: 1px solid rgba(255,255,255,0.08);
+			border-radius: 1rem;
+			padding: 1.5rem;
+			margin-bottom: 1.5rem;
+		}
+		.card h2 {
+			font-size: 0.875rem;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--muted);
+			margin: 0 0 0.75rem;
+			font-weight: 600;
+		}
+		.hq {
+			display: flex;
+			align-items: flex-start;
+			gap: 1rem;
+		}
+		.hq-icon {
+			font-size: 2rem;
+			line-height: 1;
+		}
+		.hq p { margin: 0; color: var(--text); }
+		.hq strong { color: var(--mars); }
+		ul {
+			margin: 0;
+			padding-left: 1.25rem;
+			color: var(--muted);
+		}
+		li { margin-bottom: 0.35rem; }
+		li strong { color: var(--text); }
+		footer {
+			margin-top: 2rem;
+			font-size: 0.8125rem;
+			color: var(--muted);
+		}
+	</style>
+</head>
+<body>
+	<div class="stars" aria-hidden="true"></div>
+	<main class="wrap">
+		<img
+			class="logo"
+			src="/assets/airplane_mode/images/flairline-logo.png"
+			width="200"
+			height="200"
+			alt="Flairline logo"
+		>
+		<span class="badge">Sample airline</span>
+		<h1>Flairline</h1>
+		<p class="tagline">We add flair to every mile—whether you are headed downtown or to the red planet.</p>
+
+		<section class="card" aria-labelledby="hq-heading">
+			<h2 id="hq-heading">Headquarters</h2>
+			<div class="hq">
+				<span class="hq-icon" aria-hidden="true">🪐</span>
+				<div>
+					<p><strong>Mars</strong> — Corporate campus in the Valles Marineris district. Earth liaison offices coming soon (probably).</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="card" aria-labelledby="about-heading">
+			<h2 id="about-heading">Why Flairline</h2>
+			<ul>
+				<li><strong>Zero layovers</strong> between you and your dreams (results may vary by gravity well).</li>
+				<li><strong>In-flight snacks</strong> engineered for both 1&nbsp;g and 0.38&nbsp;g environments.</li>
+				<li><strong>Customer care</strong> that answers before you finish your sentence—time dilation friendly.</li>
+			</ul>
+		</section>
+
+		<footer>
+			Demo page for the Airplane Mode training app. Not a real carrier. Visit <code>/flairline</code> on your site.
+		</footer>
+	</main>
+</body>
+</html>
