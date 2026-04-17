@@ -169,7 +169,7 @@ app_license = "mit"
 # Testing
 # -------
 
-# before_tests = "airplane_mode.install.before_tests"
+before_tests = "airplane_mode.install.before_tests"
 
 # Overriding Methods
 # ------------------------------

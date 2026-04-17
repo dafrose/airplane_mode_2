@@ -1,0 +1,16 @@
+[
+ {
+  "doctype": "Airport",
+  "name": "_TST",
+  "code": "_TST",
+  "city": "Test City One",
+  "country": "Testland"
+ },
+ {
+  "doctype": "Airport",
+  "name": "_TXY",
+  "code": "_TXY",
+  "city": "Test City Two",
+  "country": "Testland"
+ }
+]
