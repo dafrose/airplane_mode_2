@@ -8,6 +8,8 @@ from frappe.website.website_generator import WebsiteGenerator
 
 # Must match Web Form > Route (see book_flight_ticket_web_form.json)
 BOOK_FLIGHT_WEB_FORM_ROUTE = "book-flight-ticket-web-form"
+# Must match DocType **Airplane Flight** > Route (Has Web View list URL)
+FLIGHTS_WEB_ROUTE = "flights"
 
 
 class AirplaneFlight(WebsiteGenerator):

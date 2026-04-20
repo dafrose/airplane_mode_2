@@ -217,6 +217,10 @@
    "report": 1,
    "role": "Flight Crew Member",
    "share": 1
+  },
+  {
+   "read": 1,
+   "role": "Passenger"
   }
  ],
  "route": "flights",

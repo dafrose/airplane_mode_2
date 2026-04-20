@@ -83,7 +83,7 @@ app_license = "mit"
 # ------------
 
 # before_install = "airplane_mode.install.before_install"
-# after_install = "airplane_mode.install.after_install"
+after_install = "airplane_mode.install.after_install"
 
 # Uninstallation
 # ------------

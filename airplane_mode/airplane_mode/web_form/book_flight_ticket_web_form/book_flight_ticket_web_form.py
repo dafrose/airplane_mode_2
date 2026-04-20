@@ -2,7 +2,7 @@ import random
 
 import frappe
 from frappe import _
-from frappe.utils import flt
+from frappe.utils import flt, get_url
 
 from airplane_mode.airplane_mode.doctype.airplane_ticket.airplane_ticket import (
 	_passenger_ticket_scope_applies,
@@ -24,7 +24,9 @@ def get_context(context):
 	passenger = get_passenger_for_user()
 	if _passenger_ticket_scope_applies(frappe.session.user) and not passenger:
 		frappe.throw(
-			_("Complete your passenger profile before booking a flight."),
+			_("You need a passenger profile before booking. Register at {0} or ask an administrator.").format(
+				get_url("/passenger-signup")
+			),
 			exc=frappe.PermissionError,
 			title=_("Passenger profile required"),
 		)

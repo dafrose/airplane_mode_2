@@ -26,6 +26,11 @@ TEST_USERS: dict[str, tuple[str, ...]] = {
 }
 
 
+def after_install():
+	_ensure_roles()
+	frappe.db.commit()
+
+
 def before_tests():
 	_ensure_roles()
 	_ensure_test_users()

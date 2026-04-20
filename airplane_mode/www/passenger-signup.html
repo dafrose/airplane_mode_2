@@ -1,0 +1,163 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ _("Passenger sign up") }}{% endblock %}
+
+{% block head_include %}
+{{ super() }}
+<style>
+	.passenger-signup-card {
+		max-width: 28rem;
+		margin: 0 auto;
+		padding: 1.75rem;
+		background: var(--card-bg, #fff);
+		border-radius: var(--border-radius, 8px);
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+	}
+	.passenger-signup-card h1 {
+		font-size: 1.35rem;
+		margin: 0 0 1rem;
+	}
+	.passenger-signup-card label {
+		display: block;
+		font-size: 0.875rem;
+		font-weight: 600;
+		margin-top: 0.75rem;
+	}
+	.passenger-signup-card input {
+		width: 100%;
+		box-sizing: border-box;
+		margin-top: 0.25rem;
+	}
+	.passenger-signup-card .signup-error {
+		margin-top: 1rem;
+		padding: 0.6rem;
+		background: #fde8e8;
+		color: #7f1d1d;
+		border-radius: 4px;
+		font-size: 0.9rem;
+		display: none;
+	}
+	.passenger-signup-card .signup-error.visible {
+		display: block;
+	}
+	.passenger-signup-card .note {
+		margin-top: 1rem;
+		font-size: 0.875rem;
+		color: var(--text-muted, #555);
+	}
+</style>
+{% endblock %}
+
+{% block page_content %}
+<div class="passenger-signup-card">
+	{% if not is_guest %}
+	<h1>{{ _("You are already signed in") }}</h1>
+	<p class="note">{{ _("Browse flights or sign out.") }}</p>
+	<p class="note">
+		<a href="{{ flights_list_url }}">{{ _("Flights") }}</a>
+		{% if has_passenger_profile %}
+		· <a href="{{ book_ticket_new_url }}">{{ _("Book a flight (web form)") }}</a>
+		{% else %}
+		{{ _("No passenger profile is linked to this account yet. Ask an administrator to create one, or register with a new email.") }}
+		{% endif %}
+		· <a href="/login?cmd=logout">{{ _("Log out") }}</a>
+	</p>
+	{% else %}
+	<h1>{{ _("Create a passenger account") }}</h1>
+	<p class="note">
+		{{ _("Register here to get a passenger account. After sign up you are signed in and taken to the flights list to choose a flight and book.") }}
+	</p>
+	<form id="passenger-signup-form" class="passenger-signup-form">
+		<label for="signup-email">{{ _("Email") }}</label>
+		<input id="signup-email" name="email" type="email" class="form-control" autocomplete="email" required>
+
+		<label for="signup-first-name">{{ _("First name") }}</label>
+		<input id="signup-first-name" name="first_name" type="text" class="form-control" autocomplete="given-name" required>
+
+		<label for="signup-last-name">{{ _("Last name") }}</label>
+		<input id="signup-last-name" name="last_name" type="text" class="form-control" autocomplete="family-name">
+
+		<label for="signup-dob">{{ _("Date of birth") }}</label>
+		<input id="signup-dob" name="date_of_birth" type="date" class="form-control" required>
+
+		<label for="signup-password">{{ _("Password") }}</label>
+		<input id="signup-password" name="password" type="password" class="form-control" autocomplete="new-password" required>
+
+		<div id="signup-error" class="signup-error" role="alert"></div>
+		<button type="submit" class="btn btn-primary btn-block mt-3" id="signup-submit">{{ _("Sign up") }}</button>
+	</form>
+	<p class="note">{{ _("Already have an account?") }} <a href="/login">{{ _("Log in") }}</a></p>
+	{% endif %}
+</div>
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+{% if is_guest %}
+<script>
+frappe.ready(function () {
+	var form = document.getElementById("passenger-signup-form");
+	if (!form) {
+		return;
+	}
+	var err = document.getElementById("signup-error");
+	var btn = document.getElementById("signup-submit");
+
+	function show_error(message) {
+		err.textContent = message;
+		err.classList.add("visible");
+	}
+
+	function clear_error() {
+		err.classList.remove("visible");
+		err.textContent = "";
+	}
+
+	form.addEventListener("submit", function (e) {
+		e.preventDefault();
+		clear_error();
+		btn.disabled = true;
+
+		frappe.call({
+			method: "airplane_mode.api.passenger_signup",
+			type: "POST",
+			silent: true,
+			args: {
+				email: document.getElementById("signup-email").value.trim(),
+				first_name: document.getElementById("signup-first-name").value.trim(),
+				last_name: document.getElementById("signup-last-name").value.trim(),
+				date_of_birth: document.getElementById("signup-dob").value,
+				password: document.getElementById("signup-password").value,
+			},
+			callback: function (r) {
+				if (r.message && r.message.redirect_to) {
+					window.location.href = r.message.redirect_to;
+				}
+			},
+			error: function (r) {
+				var fallback = {{ _("Something went wrong.") | tojson }};
+				var message = fallback;
+				var payload = r && (r.responseJSON || r);
+				if (payload && payload._server_messages) {
+					try {
+						var arr = JSON.parse(payload._server_messages);
+						var first = arr[0];
+						var parsed = typeof first === "string" ? JSON.parse(first) : first;
+						if (parsed && parsed.message) {
+							message = parsed.message;
+						}
+					} catch (e) {
+						/* keep fallback */
+					}
+				}
+				show_error(message);
+			},
+			always: function () {
+				btn.disabled = false;
+			},
+		});
+	});
+});
+</script>
+{% endif %}
+{% endblock %}

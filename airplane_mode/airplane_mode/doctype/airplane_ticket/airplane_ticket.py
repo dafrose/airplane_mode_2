@@ -78,6 +78,8 @@ class AirplaneTicket(Document):
 			self.seat = generate_seat_assignment()
 
 	def validate(self):
+		if self.flight and flt(self.flight_price) <= 0:
+			self.flight_price = flt(random.randint(100, 10000))
 		self._dedupe_add_ons()
 		self._validate_passenger_matches_portal_user()
 		self._validate_flight_capacity()
