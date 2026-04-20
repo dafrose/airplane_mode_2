@@ -13,6 +13,38 @@ def generate_seat_assignment() -> str:
 	return f"{random.randint(1, 99)}{random.choice('ABCDE')}"
 
 
+def _passenger_ticket_scope_applies(user: str) -> bool:
+	"""True for portal passengers: **Passenger** role on a **Website User** account."""
+	if "Passenger" in frappe.get_roles(user):
+		return frappe.db.get_value("User", user, "user_type") == "Website User"
+	else:
+		return False
+
+
+def get_permission_query_conditions(user: str | None = None) -> str:
+	"""Restrict **Airplane Ticket** list/API rows for portal passengers (hooks)."""
+	user = user or frappe.session.user
+	if not _passenger_ticket_scope_applies(user):
+		return ""
+	user_sql = frappe.db.escape(user, percent=False)
+	return f"""EXISTS (
+		SELECT 1 FROM `tabFlight Passenger` `fp`
+		WHERE `fp`.`name` = `tabAirplane Ticket`.`passenger`
+		AND `fp`.`user` = {user_sql}
+	)"""
+
+
+def has_airplane_ticket_doc_permission(doc, ptype="read", user=None, debug=False):
+	"""Hook: deny portal **Passenger** users access to tickets that are not theirs."""
+	user = user or frappe.session.user
+	if not _passenger_ticket_scope_applies(user):
+		return None
+	linked_user = frappe.db.get_value("Flight Passenger", doc.get("passenger"), "user")
+	if linked_user != user:
+		return False
+	return None
+
+
 class AirplaneTicket(Document):
 	# begin: auto-generated types
 	# This code is auto-generated. Do not modify anything in this block.
@@ -47,6 +79,7 @@ class AirplaneTicket(Document):
 
 	def validate(self):
 		self._dedupe_add_ons()
+		self._validate_passenger_matches_portal_user()
 		self._validate_flight_capacity()
 		addon_total = sum(flt(row.amount) for row in self.add_ons)
 		self.total_amount = flt(self.flight_price) + addon_total
@@ -56,6 +89,16 @@ class AirplaneTicket(Document):
 			frappe.throw(
 				_("Only tickets with status {0} can be submitted.").format(frappe.bold("Boarded")),
 				title=_("Cannot Submit"),
+			)
+
+	def _validate_passenger_matches_portal_user(self):
+		if not self.passenger or not _passenger_ticket_scope_applies(frappe.session.user):
+			return
+		linked_user = frappe.db.get_value("Flight Passenger", self.passenger, "user")
+		if linked_user != frappe.session.user:
+			frappe.throw(
+				_("You can only book tickets for your own passenger profile."),
+				title=_("Invalid passenger"),
 			)
 
 	def _validate_flight_capacity(self):

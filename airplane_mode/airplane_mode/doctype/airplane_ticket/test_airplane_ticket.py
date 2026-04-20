@@ -9,7 +9,11 @@ from frappe.tests.utils import FrappeTestCase
 from airplane_mode.airplane_mode.doctype.airplane_ticket.airplane_ticket import (
 	generate_seat_assignment,
 )
-from airplane_mode.tests.helpers import create_test_flight, create_test_ticket
+from airplane_mode.tests.helpers import (
+	create_test_flight,
+	create_test_passenger,
+	create_test_ticket,
+)
 
 SEAT_REGEX = re.compile(r"^[1-9][0-9]?[A-E]$")
 
@@ -38,6 +42,8 @@ class TestAirplaneTicket(FrappeTestCase):
 	"""
 
 	def setUp(self):
+		super().setUp()
+		frappe.set_user("Administrator")
 		self.flight = create_test_flight()
 
 	def test_seat_auto_generated_on_insert(self):
@@ -89,3 +95,68 @@ class TestAirplaneTicket(FrappeTestCase):
 		ticket.status = "Boarded"
 		ticket.submit()
 		self.assertEqual(ticket.docstatus, 1)
+
+
+class TestAirplaneTicketPassengerPermissions(FrappeTestCase):
+	def setUp(self):
+		super().setUp()
+		frappe.set_user("Administrator")
+		self.flight = create_test_flight()
+		self.email = "passenger_perm_scope@airplane.test"
+		self._ensure_passenger_website_user(self.email)
+		self.user_name = frappe.db.get_value("User", {"email": self.email}, "name")
+		self.own_passenger = create_test_passenger(first_name="_OwnPax", user=self.user_name)
+		self.other_passenger = create_test_passenger(first_name="_OtherPax")
+		self.ticket_own = create_test_ticket(flight=self.flight.name, passenger=self.own_passenger)
+		self.ticket_other = create_test_ticket(flight=self.flight.name, passenger=self.other_passenger)
+		# **Travel Agent** read perm uses *if_owner*; assign owner so list tests see both rows.
+		for row in (self.ticket_own, self.ticket_other):
+			frappe.db.set_value(
+				"Airplane Ticket",
+				row.name,
+				"owner",
+				"travel_agent_a@airplane.test",
+				update_modified=False,
+			)
+
+	def tearDown(self):
+		frappe.set_user("Administrator")
+
+	def _ensure_passenger_website_user(self, email: str) -> None:
+		if frappe.db.exists("User", {"email": email}):
+			return
+		user = frappe.get_doc(
+			{
+				"doctype": "User",
+				"email": email,
+				"first_name": "Pax",
+				"enabled": 1,
+				"send_welcome_email": 0,
+				"user_type": "Website User",
+				"new_password": "testpass123",
+			}
+		)
+		user.append("roles", {"role": "Passenger"})
+		user.insert(ignore_permissions=True)
+
+	def test_get_list_only_shows_linked_tickets(self):
+		frappe.set_user(self.user_name)
+		names = frappe.get_list("Airplane Ticket", pluck="name")
+		self.assertIn(self.ticket_own.name, names)
+		self.assertNotIn(self.ticket_other.name, names)
+
+	def test_has_permission_denies_other_passenger_ticket(self):
+		frappe.set_user(self.user_name)
+		self.assertTrue(frappe.has_permission("Airplane Ticket", "read", doc=self.ticket_own))
+		self.assertFalse(frappe.has_permission("Airplane Ticket", "read", doc=self.ticket_other))
+
+	def test_portal_user_cannot_book_ticket_for_other_passenger(self):
+		frappe.set_user(self.user_name)
+		with self.assertRaisesRegex(frappe.ValidationError, "own passenger profile"):
+			create_test_ticket(flight=self.flight.name, passenger=self.other_passenger)
+
+	def test_travel_agent_sees_all_tickets(self):
+		frappe.set_user("travel_agent_a@airplane.test")
+		names = frappe.get_list("Airplane Ticket", pluck="name")
+		self.assertIn(self.ticket_own.name, names)
+		self.assertIn(self.ticket_other.name, names)

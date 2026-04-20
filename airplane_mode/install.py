@@ -17,6 +17,7 @@ REQUIRED_ROLES = (
 	"Fleet Manager",
 	"Travel Agent",
 	"Flight Crew Member",
+	"Passenger",
 )
 
 TEST_USERS: dict[str, tuple[str, ...]] = {
@@ -35,11 +36,12 @@ def _ensure_roles() -> None:
 	for role_name in REQUIRED_ROLES:
 		if frappe.db.exists("Role", role_name):
 			continue
+		desk_access = 0 if role_name == "Passenger" else 1
 		frappe.get_doc(
 			{
 				"doctype": "Role",
 				"role_name": role_name,
-				"desk_access": 1,
+				"desk_access": desk_access,
 			}
 		).insert(ignore_permissions=True)
 

@@ -43,19 +43,27 @@ def create_test_flight(
 			"time_of_departure": departure_time or time(9, 30),
 			"duration": duration_seconds,
 		}
-	).insert()
+	).insert(ignore_permissions=True)
+	doc.flags.ignore_permissions = False
 	return doc
 
 
-def create_test_passenger(first_name: str = "_TestPax", last_name: str = "Doe") -> str:
+def create_test_passenger(
+	first_name: str = "_TestPax",
+	last_name: str = "Doe",
+	*,
+	user: str | None = None,
+) -> str:
 	doc = frappe.get_doc(
 		{
 			"doctype": "Flight Passenger",
 			"first_name": first_name,
 			"last_name": last_name,
 			"date_of_birth": "1990-01-01",
+			"user": user or frappe.session.user,
 		}
-	).insert()
+	).insert(ignore_permissions=True)
+	doc.flags.ignore_permissions = False
 	return doc.name
 
 
@@ -84,5 +92,6 @@ def create_test_ticket(
 		doc.seat = seat
 	for row in add_ons or []:
 		doc.append("add_ons", row)
-	doc.insert()
+	doc.insert(ignore_permissions=True)
+	doc.flags.ignore_permissions = False
 	return doc
