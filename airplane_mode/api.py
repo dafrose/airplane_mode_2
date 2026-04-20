@@ -5,6 +5,8 @@
 
 from __future__ import annotations
 
+import json
+
 import frappe
 from frappe import _
 from frappe.auth import CookieManager, LoginManager
@@ -103,3 +105,55 @@ def passenger_signup(
 	return {
 		"redirect_to": f"/{FLIGHTS_WEB_ROUTE}",
 	}
+
+
+@frappe.whitelist()
+def passenger_link_titles(passenger_ids):
+	"""Map **Flight Passenger** id → display name for portal list cells.
+
+	Only ids that appear on at least one **Airplane Ticket** the current user may read
+	are returned.
+	"""
+	if isinstance(passenger_ids, str):
+		passenger_ids = json.loads(passenger_ids)
+
+	if not isinstance(passenger_ids, list):
+		frappe.throw(_("Invalid request"))
+
+	normalized = []
+	for x in passenger_ids[:200]:
+		if x is None or str(x).strip() == "":
+			continue
+		s = str(x).strip()
+		if s not in normalized:
+			normalized.append(s)
+
+	if not normalized:
+		return {}
+
+	allowed = {
+		str(x)
+		for x in (
+			frappe.get_all(
+				"Airplane Ticket",
+				filters={"passenger": ["in", normalized]},
+				pluck="passenger",
+			)
+			or []
+		)
+		if x is not None
+	}
+	to_fetch = [p for p in normalized if p in allowed]
+	if not to_fetch:
+		return {}
+
+	out = {}
+	for row in frappe.get_all(
+		"Flight Passenger",
+		filters={"name": ["in", to_fetch]},
+		fields=["name", "full_name", "first_name"],
+		ignore_permissions=True,
+	):
+		out[str(row.name)] = (row.get("full_name") or row.get("first_name") or "").strip()
+
+	return out

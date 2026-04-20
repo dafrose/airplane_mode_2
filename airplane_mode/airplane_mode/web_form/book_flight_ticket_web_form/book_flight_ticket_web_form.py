@@ -12,9 +12,22 @@ from airplane_mode.airplane_mode.doctype.flight_passenger.flight_passenger impor
 )
 
 
+def _passenger_display_name(passenger_id: str | None) -> str:
+	if not passenger_id:
+		return ""
+	return (
+		frappe.db.get_value("Flight Passenger", passenger_id, "full_name")
+		or frappe.db.get_value("Flight Passenger", passenger_id, "first_name")
+		or ""
+	)
+
+
 def get_context(context):
 	# Existing saved response: keep server-loaded document
 	if frappe.form_dict.get("name"):
+		if frappe.db.exists("Airplane Ticket", frappe.form_dict.name):
+			passenger = frappe.db.get_value("Airplane Ticket", frappe.form_dict.name, "passenger")
+			context.reference_doc["passenger_display"] = _passenger_display_name(passenger)
 		return None
 
 	flight = frappe.form_dict.get("flight")
@@ -38,6 +51,10 @@ def get_context(context):
 		"flight": flight,
 		"flight_price": price,
 	}
+
 	if passenger:
 		reference_doc["passenger"] = passenger
-	return {"reference_doc": reference_doc}
+	reference_doc["passenger_display"] = _passenger_display_name(passenger) if passenger else ""
+
+	# Hydrates `frappe.reference_doc` in web_form.html (defaults for new forms start as {}).
+	context.reference_doc = reference_doc

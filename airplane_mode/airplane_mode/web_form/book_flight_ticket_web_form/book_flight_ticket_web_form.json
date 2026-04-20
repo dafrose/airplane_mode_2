@@ -3,10 +3,10 @@
  "allow_delete": 0,
  "allow_edit": 0,
  "allow_incomplete": 0,
- "allow_multiple": 0,
+ "allow_multiple": 1,
  "allow_print": 0,
  "anonymous": 0,
- "apply_document_permissions": 0,
+ "apply_document_permissions": 1,
  "button_label": "Confirm",
  "condition_json": "[]",
  "creation": "2026-04-15 11:54:03.396756",
@@ -16,10 +16,30 @@
  "idx": 0,
  "introduction_text": "<div class=\"ql-editor read-mode\"><p>Fly with us!</p></div>",
  "is_standard": 1,
- "list_columns": [],
+ "list_columns": [
+  {
+   "fieldname": "passenger",
+   "fieldtype": "Link",
+   "label": "Passenger",
+   "options": "Flight Passenger"
+  },
+  {
+   "fieldname": "flight",
+   "fieldtype": "Link",
+   "label": "Flight",
+   "options": "Airplane Flight"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Booked\nChecked-In\nBoarded"
+  }
+ ],
+ "list_title": "Booked Tickets",
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2026-04-20 13:02:04.141624",
+ "modified": "2026-04-20 14:33:57.260772",
  "modified_by": "Administrator",
  "module": "Airplane Mode",
  "name": "book-flight-ticket-web-form",
@@ -27,7 +47,7 @@
  "published": 1,
  "route": "book-flight-ticket-web-form",
  "show_attachments": 0,
- "show_list": 0,
+ "show_list": 1,
  "show_sidebar": 0,
  "success_message": "You will receive the details in your email soon",
  "success_title": "Ticket Booked",
@@ -47,7 +67,7 @@
    "show_in_filter": 0
   },
   {
-   "allow_read_on_all_link_options": 1,
+   "allow_read_on_all_link_options": 0,
    "fieldname": "passenger",
    "fieldtype": "Link",
    "hidden": 0,
