@@ -46,6 +46,11 @@ class TestAirplaneTicket(FrappeTestCase):
 		frappe.set_user("Administrator")
 		self.flight = create_test_flight()
 
+	def test_validate_sets_gate_number_from_flight_when_present(self):
+		flight = create_test_flight(gate_number="D4")
+		ticket = create_test_ticket(flight=flight.name)
+		self.assertEqual(ticket.gate_number, "D4")
+
 	def test_seat_auto_generated_on_insert(self):
 		ticket = create_test_ticket(flight=self.flight.name)
 		self.assertRegex(ticket.seat, SEAT_REGEX)
