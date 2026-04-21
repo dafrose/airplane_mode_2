@@ -25,7 +25,6 @@ class FlightPassenger(Document):
 		date_of_birth: DF.Date
 		first_name: DF.Data
 		full_name: DF.Data | None
-		last_logged_in: DF.Datetime | None
 		last_name: DF.Data | None
 		managed_by: DF.Link | None
 		name: DF.Int | None

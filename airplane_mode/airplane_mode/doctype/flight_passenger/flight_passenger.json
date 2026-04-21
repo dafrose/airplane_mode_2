@@ -11,9 +11,7 @@
   "column_break_jhdn",
   "date_of_birth",
   "user",
-  "managed_by",
-  "section_break_zlpn",
-  "last_logged_in"
+  "managed_by"
  ],
  "fields": [
   {
@@ -59,18 +57,6 @@
    "fieldtype": "Link",
    "label": "Managed By",
    "options": "User"
-  },
-  {
-   "fieldname": "section_break_zlpn",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "last_logged_in",
-   "fieldtype": "Datetime",
-   "hidden": 1,
-   "label": "Last Logged In",
-   "read_only": 1,
-   "show_on_timeline": 1
   }
  ],
  "grid_page_length": 50,
@@ -81,7 +67,7 @@
    "link_fieldname": "passenger"
   }
  ],
- "modified": "2026-04-21 11:46:31.564272",
+ "modified": "2026-04-21 14:59:33.411251",
  "modified_by": "Administrator",
  "module": "Airplane Mode",
  "name": "Flight Passenger",

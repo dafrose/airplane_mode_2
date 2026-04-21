@@ -145,3 +145,5 @@ class TestAirplaneFlight(FrappeTestCase):
 		self.assertEqual(msg["old_gate"], "X1")
 		self.assertEqual(msg["new_gate"], "X2")
 		self.assertIn("view_ticket_url", msg)
+		self.assertIn(BOOK_FLIGHT_WEB_FORM_ROUTE, msg["view_ticket_url"])
+		self.assertNotIn("/app/Form/", msg["view_ticket_url"])

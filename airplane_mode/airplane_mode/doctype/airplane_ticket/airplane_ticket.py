@@ -14,11 +14,12 @@ def generate_seat_assignment() -> str:
 
 
 def _passenger_ticket_scope_applies(user: str) -> bool:
-	"""True for portal passengers: **Passenger** role on a **Website User** account."""
-	if "Passenger" in frappe.get_roles(user):
-		return frappe.db.get_value("User", user, "user_type") == "Website User"
-	else:
+	"""True when *user* is **Passenger**-scoped for tickets (not **System Manager**)."""
+	if not user or user == "Guest":
 		return False
+	if "System Manager" in frappe.get_roles(user):
+		return False
+	return "Passenger" in frappe.get_roles(user)
 
 
 def get_permission_query_conditions(user: str | None = None) -> str:
@@ -35,7 +36,7 @@ def get_permission_query_conditions(user: str | None = None) -> str:
 
 
 def has_airplane_ticket_doc_permission(doc, ptype="read", user=None, debug=False):
-	"""Hook: deny portal **Passenger** users access to tickets that are not theirs."""
+	"""Hook: deny **Passenger**-role users access to tickets that are not theirs."""
 	user = user or frappe.session.user
 	if not _passenger_ticket_scope_applies(user):
 		return None

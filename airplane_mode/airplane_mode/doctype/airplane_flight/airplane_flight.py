@@ -1,8 +1,6 @@
 # Copyright (c) 2026, ALYF and contributors
 # For license information, please see license.txt
 
-from urllib.parse import quote
-
 import frappe
 from frappe import _
 from frappe.utils import get_url, now_datetime
@@ -16,6 +14,11 @@ FLIGHTS_WEB_ROUTE = "flights"
 
 GATE_CHANGE_REALTIME_EVENT = "airplane_ticket_gate_change"
 _GATE_BEFORE_SAVE_MISSING = object()
+
+
+def get_airplane_ticket_portal_url(ticket_name: str) -> str:
+	"""Website URL for a passenger to open their **Airplane Ticket** (book-flight Web Form)."""
+	return get_url(f"/{BOOK_FLIGHT_WEB_FORM_ROUTE}/{quoted(ticket_name)}")
 
 
 def sync_tickets_gate_for_flight(flight_name: str) -> None:
@@ -60,7 +63,6 @@ def sync_tickets_gate_for_flight(flight_name: str) -> None:
 		user = frappe.db.get_value("Flight Passenger", row.passenger, "user")
 		# assume user exists. We do not want to fail silently.
 
-		view_path = f"/app/Form/{quote('Airplane Ticket')}/{quote(row.name)}"
 		frappe.publish_realtime(
 			event=GATE_CHANGE_REALTIME_EVENT,
 			message={
@@ -68,7 +70,7 @@ def sync_tickets_gate_for_flight(flight_name: str) -> None:
 				"flight": flight_name,
 				"old_gate": old_gate,
 				"new_gate": flight_gate,
-				"view_ticket_url": get_url(view_path),
+				"view_ticket_url": get_airplane_ticket_portal_url(row.name),
 			},
 			user=user,
 		)
