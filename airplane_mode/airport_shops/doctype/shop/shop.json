@@ -1,0 +1,118 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "{airport_code}.-SHOP-.###",
+ "creation": "2026-04-21 17:12:00.384109",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "airport",
+  "airport_code",
+  "shop_number",
+  "column_break_fwsr",
+  "shop_type",
+  "area",
+  "section_break_zlwr",
+  "status",
+  "column_break_jxbg",
+  "is_published"
+ ],
+ "fields": [
+  {
+   "fieldname": "airport",
+   "fieldtype": "Link",
+   "label": "Airport",
+   "options": "Airport",
+   "reqd": 1
+  },
+  {
+   "description": "m\u00b2",
+   "fieldname": "area",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Area",
+   "non_negative": 1,
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "shop_number",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "is_virtual": 1,
+   "label": "Shop Number",
+   "non_negative": 1,
+   "options": "int(doc.name.split(\"-\")[-1])",
+   "read_only": 1
+  },
+  {
+   "default": "Available",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Available\nOccupied"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_published",
+   "fieldtype": "Check",
+   "label": "Is Published?"
+  },
+  {
+   "fieldname": "column_break_fwsr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "airport.code",
+   "fetch_if_empty": 1,
+   "fieldname": "airport_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Airport Code",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_zlwr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_jxbg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shop_type",
+   "fieldtype": "Data",
+   "label": "Shop Type"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-21 17:38:43.644219",
+ "modified_by": "Administrator",
+ "module": "Airport Shops",
+ "name": "Shop",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
