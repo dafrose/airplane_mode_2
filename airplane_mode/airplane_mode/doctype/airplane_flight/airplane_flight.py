@@ -3,6 +3,7 @@
 
 import frappe
 from frappe import _
+from frappe.utils import get_url, now_datetime
 from frappe.utils.data import quoted
 from frappe.website.website_generator import WebsiteGenerator
 
@@ -10,6 +11,69 @@ from frappe.website.website_generator import WebsiteGenerator
 BOOK_FLIGHT_WEB_FORM_ROUTE = "book-flight-ticket-web-form"
 # Must match DocType **Airplane Flight** > Route (Has Web View list URL)
 FLIGHTS_WEB_ROUTE = "flights"
+
+GATE_CHANGE_REALTIME_EVENT = "airplane_ticket_gate_change"
+_GATE_BEFORE_SAVE_MISSING = object()
+
+
+def get_airplane_ticket_portal_url(ticket_name: str) -> str:
+	"""Website URL for a passenger to open their **Airplane Ticket** (book-flight Web Form)."""
+	return get_url(f"/{BOOK_FLIGHT_WEB_FORM_ROUTE}/{quoted(ticket_name)}")
+
+
+def sync_tickets_gate_for_flight(flight_name: str) -> None:
+	"""Align **Airplane Ticket** *gate_number* with the flight; stamp *gate_number_changed_on*
+	when a ticket value changes; notify the passenger *User* over realtime.
+	"""
+	# Do not check, if flight does not exist.
+	# We do not want to fail silently.
+
+	flight_gate = frappe.db.get_value("Airplane Flight", flight_name, "gate_number")
+
+	def norm(g) -> str:
+		return (g or "").strip()
+
+	target = norm(flight_gate)
+
+	tickets = frappe.get_all(
+		"Airplane Ticket",
+		filters=[
+			["flight", "=", flight_name],
+			["docstatus", "=", 0],  # only draft tickets
+		],
+		fields=["name", "gate_number", "passenger"],
+	)
+
+	for row in tickets:
+		if norm(row.gate_number) == target:
+			continue
+
+		old_gate = row.gate_number
+
+		frappe.db.set_value(
+			"Airplane Ticket",
+			row.name,
+			{
+				"gate_number": flight_gate,
+				"gate_number_changed_on": now_datetime(),
+			},
+			update_modified=False,
+		)
+
+		user = frappe.db.get_value("Flight Passenger", row.passenger, "user")
+		# assume user exists. We do not want to fail silently.
+
+		frappe.publish_realtime(
+			event=GATE_CHANGE_REALTIME_EVENT,
+			message={
+				"ticket": row.name,
+				"flight": flight_name,
+				"old_gate": old_gate,
+				"new_gate": flight_gate,
+				"view_ticket_url": get_airplane_ticket_portal_url(row.name),
+			},
+			user=user,
+		)
 
 
 class AirplaneFlight(WebsiteGenerator):
@@ -21,12 +85,18 @@ class AirplaneFlight(WebsiteGenerator):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
+		from airplane_mode.airplane_mode.doctype.flight_crew_member.flight_crew_member import (
+			FlightCrewMember,
+		)
+
 		airplane: DF.Link
 		amended_from: DF.Link | None
 		date_of_departure: DF.Date
 		destination_airport: DF.Link
 		destination_airport_code: DF.Data | None
 		duration: DF.Duration
+		flight_crew: DF.Table[FlightCrewMember]
+		gate_number: DF.Data | None
 		is_published: DF.Check
 		route: DF.Data | None
 		source_airport: DF.Link
@@ -40,6 +110,28 @@ class AirplaneFlight(WebsiteGenerator):
 		context.title = f"{airline} — {self.source_airport_code} → {self.destination_airport_code}"
 		context.book_flight_url = f"/{BOOK_FLIGHT_WEB_FORM_ROUTE}/new?flight={quoted(self.name)}"
 		return context
+
+	def before_save(self):
+		if self.is_new():
+			self._gate_number_before_save = None
+		else:
+			self._gate_number_before_save = frappe.db.get_value("Airplane Flight", self.name, "gate_number")
+
+	def on_update(self):
+		prev = getattr(self, "_gate_number_before_save", _GATE_BEFORE_SAVE_MISSING)
+		if prev is _GATE_BEFORE_SAVE_MISSING:
+			return
+		before = prev or ""
+		after = self.gate_number or ""
+		if before == after:
+			return
+
+		frappe.enqueue(
+			"airplane_mode.airplane_mode.doctype.airplane_flight.airplane_flight.sync_tickets_gate_for_flight",
+			queue="default",
+			job_name=f"flight_gate_sync|{self.name}",
+			flight_name=self.name,
+		)
 
 	def on_submit(self):
 		self.db_set("status", "Completed")

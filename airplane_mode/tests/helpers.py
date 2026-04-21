@@ -32,18 +32,20 @@ def create_test_flight(
 	departure_time: time | None = None,
 	duration_seconds: int = 2 * 60 * 60,
 	airplane: str | None = None,
+	gate_number: str | None = None,
 ) -> frappe.model.document.Document:
-	doc = frappe.get_doc(
-		{
-			"doctype": "Airplane Flight",
-			"airplane": airplane or get_test_airplane(),
-			"source_airport": source,
-			"destination_airport": destination,
-			"date_of_departure": departure_date or date(2099, 6, 15),
-			"time_of_departure": departure_time or time(9, 30),
-			"duration": duration_seconds,
-		}
-	).insert(ignore_permissions=True)
+	data: dict = {
+		"doctype": "Airplane Flight",
+		"airplane": airplane or get_test_airplane(),
+		"source_airport": source,
+		"destination_airport": destination,
+		"date_of_departure": departure_date or date(2099, 6, 15),
+		"time_of_departure": departure_time or time(9, 30),
+		"duration": duration_seconds,
+	}
+	if gate_number is not None:
+		data["gate_number"] = gate_number
+	doc = frappe.get_doc(data).insert(ignore_permissions=True)
 	doc.flags.ignore_permissions = False
 	return doc
 
@@ -54,13 +56,19 @@ def create_test_passenger(
 	*,
 	user: str | None = None,
 ) -> str:
+	"""Insert a **Flight Passenger** or return the existing row for *user* (unique per user)."""
+	user = user or frappe.session.user
+	existing = frappe.db.get_value("Flight Passenger", {"user": user}, "name")
+	if existing:
+		return existing
+
 	doc = frappe.get_doc(
 		{
 			"doctype": "Flight Passenger",
 			"first_name": first_name,
 			"last_name": last_name,
 			"date_of_birth": "1990-01-01",
-			"user": user or frappe.session.user,
+			"user": user,
 		}
 	).insert(ignore_permissions=True)
 	doc.flags.ignore_permissions = False

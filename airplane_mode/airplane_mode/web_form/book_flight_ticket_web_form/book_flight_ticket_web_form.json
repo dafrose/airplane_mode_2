@@ -39,7 +39,7 @@
  "list_title": "Booked Tickets",
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2026-04-20 14:33:57.260772",
+ "modified": "2026-04-21 15:06:14.339791",
  "modified_by": "Administrator",
  "module": "Airplane Mode",
  "name": "book-flight-ticket-web-form",
@@ -109,12 +109,15 @@
   },
   {
    "allow_read_on_all_link_options": 0,
-   "fieldtype": "Attach",
+   "depends_on": "eval: doc.gate_number != null",
+   "fieldname": "gate_number",
+   "fieldtype": "Data",
    "hidden": 0,
+   "label": "Gate Number",
    "max_length": 0,
    "max_value": 0,
    "precision": "",
-   "read_only": 0,
+   "read_only": 1,
    "reqd": 0,
    "show_in_filter": 0
   }

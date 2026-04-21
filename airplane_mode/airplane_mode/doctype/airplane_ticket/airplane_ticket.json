@@ -27,9 +27,12 @@
   "departure_time",
   "column_break_vhrc",
   "duration_of_flight",
+  "gate_number",
   "section_break_xtkz",
   "column_break_lcsj",
-  "amended_from"
+  "amended_from",
+  "column_break_titn",
+  "gate_number_changed_on"
  ],
  "fields": [
   {
@@ -171,13 +174,30 @@
    "fieldtype": "Currency",
    "label": "Total Amount",
    "read_only": 1
+  },
+  {
+   "fieldname": "gate_number",
+   "fieldtype": "Read Only",
+   "label": "Gate Number"
+  },
+  {
+   "fieldname": "gate_number_changed_on",
+   "fieldtype": "Datetime",
+   "hidden": 1,
+   "label": "Gate Number Changed On",
+   "read_only": 1,
+   "show_on_timeline": 1
+  },
+  {
+   "fieldname": "column_break_titn",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-04-20 10:48:56.446075",
+ "modified": "2026-04-21 11:46:51.858949",
  "modified_by": "Administrator",
  "module": "Airplane Mode",
  "name": "Airplane Ticket",
