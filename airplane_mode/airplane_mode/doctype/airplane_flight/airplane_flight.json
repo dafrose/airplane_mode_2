@@ -23,6 +23,9 @@
   "time_of_departure",
   "column_break_kygz",
   "duration",
+  "gate_number",
+  "flight_crew_section",
+  "flight_crew",
   "section_break_bnmh",
   "is_published",
   "route"
@@ -141,6 +144,22 @@
    "fieldtype": "Data",
    "label": "Route",
    "read_only": 1
+  },
+  {
+   "fieldname": "flight_crew",
+   "fieldtype": "Table",
+   "options": "Flight Crew Member"
+  },
+  {
+   "bold": 1,
+   "fieldname": "flight_crew_section",
+   "fieldtype": "Section Break",
+   "label": "Flight Crew"
+  },
+  {
+   "fieldname": "gate_number",
+   "fieldtype": "Data",
+   "label": "Gate Number"
   }
  ],
  "grid_page_length": 50,
@@ -154,7 +173,7 @@
    "link_fieldname": "flight"
   }
  ],
- "modified": "2026-04-17 11:16:30.796457",
+ "modified": "2026-04-21 11:35:44.557621",
  "modified_by": "Administrator",
  "module": "Airplane Mode",
  "name": "Airplane Flight",

@@ -21,12 +21,16 @@ class AirplaneFlight(WebsiteGenerator):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
+		from airplane_mode.airplane_mode.doctype.flight_crew_member.flight_crew_member import FlightCrewMember
+
 		airplane: DF.Link
 		amended_from: DF.Link | None
 		date_of_departure: DF.Date
 		destination_airport: DF.Link
 		destination_airport_code: DF.Data | None
 		duration: DF.Duration
+		flight_crew: DF.Table[FlightCrewMember]
+		gate_number: DF.Data | None
 		is_published: DF.Check
 		route: DF.Data | None
 		source_airport: DF.Link
