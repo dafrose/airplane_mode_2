@@ -11,6 +11,7 @@
   "amount_due",
   "column_break_yogd",
   "airport_code",
+  "tenant",
   "section_break_rvch",
   "period_start",
   "period_end",
@@ -95,13 +96,21 @@
    "fieldname": "date_payed",
    "fieldtype": "Date",
    "label": "Date Payed"
+  },
+  {
+   "fetch_from": "lease_contract.tenant",
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "label": "Tenant",
+   "options": "Shop Tenant",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-04-21 18:05:53.220627",
+ "modified": "2026-04-22 09:24:12.550969",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Shop Rent Payment",
@@ -117,6 +126,19 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Airport Authority Personnel",
    "share": 1,
    "submit": 1,
    "write": 1

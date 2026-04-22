@@ -34,7 +34,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-04-21 18:12:20.412383",
+ "modified": "2026-04-22 07:11:45.690495",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Airport Shop Settings",
@@ -47,6 +47,16 @@
    "print": 1,
    "read": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Airport Authority Personnel",
    "share": 1,
    "write": 1
   }

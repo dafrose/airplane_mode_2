@@ -18,11 +18,15 @@ REQUIRED_ROLES = (
 	"Travel Agent",
 	"Flight Crew Member",
 	"Passenger",
+	"Shop Tenant",
 )
 
 TEST_USERS: dict[str, tuple[str, ...]] = {
 	"travel_agent_a@airplane.test": ("Travel Agent",),
 	"travel_agent_b@airplane.test": ("Travel Agent",),
+	# **Shop Tenant** role is assigned only when linked from **Shop Tenant** `user` (see `ShopTenant` hooks).
+	"shop_tenant_a@airplane.test": (),
+	"shop_tenant_b@airplane.test": (),
 }
 
 
@@ -72,3 +76,15 @@ def _ensure_test_users() -> None:
 			for role in missing:
 				user.append("roles", {"role": role})
 			user.save(ignore_permissions=True)
+
+		# **Shop Tenant** role is granted from **Shop Tenant** `user` link only — strip stale role from older test DBs.
+		if email.startswith("shop_tenant_") and email.endswith("@airplane.test"):
+			user.reload()
+			if "Shop Tenant" in {r.role for r in user.roles}:
+				user.remove_roles("Shop Tenant")
+			for up in frappe.get_all(
+				"User Permission",
+				filters={"user": email, "allow": "Shop Tenant"},
+				pluck="name",
+			):
+				frappe.delete_doc("User Permission", up, ignore_permissions=True, force=True)

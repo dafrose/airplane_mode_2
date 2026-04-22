@@ -22,5 +22,6 @@ class ShopRentPayment(Document):
 		lease_contract: DF.Link
 		period_end: DF.Date | None
 		period_start: DF.Date | None
+		tenant: DF.Link | None
 	# end: auto-generated types
 	pass
