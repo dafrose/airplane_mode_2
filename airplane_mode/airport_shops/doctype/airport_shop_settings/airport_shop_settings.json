@@ -11,6 +11,7 @@
  ],
  "fields": [
   {
+   "default": "0",
    "fieldname": "default_rent_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -34,7 +35,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-04-22 07:11:45.690495",
+ "modified": "2026-04-22 11:04:45.210782",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Airport Shop Settings",

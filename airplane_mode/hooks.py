@@ -85,6 +85,12 @@ web_include_js = ["/assets/airplane_mode/js/airplane_gate_alerts.js"]
 # before_install = "airplane_mode.install.before_install"
 after_install = "airplane_mode.install.after_install"
 
+# Fixtures (see `bench export-fixtures` — e.g. default **Airport Shop Settings** row)
+# --------
+fixtures = [
+	"Airport Shop Settings",
+]
+
 # Uninstallation
 # ------------
 
