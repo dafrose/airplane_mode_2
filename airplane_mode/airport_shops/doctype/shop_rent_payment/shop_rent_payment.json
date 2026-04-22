@@ -12,6 +12,7 @@
   "column_break_yogd",
   "airport_code",
   "tenant",
+  "tenant_email",
   "section_break_rvch",
   "period_start",
   "period_end",
@@ -104,13 +105,21 @@
    "label": "Tenant",
    "options": "Shop Tenant",
    "read_only": 1
+  },
+  {
+   "fetch_from": "tenant.email",
+   "fieldname": "tenant_email",
+   "fieldtype": "Data",
+   "label": "Tenant Email",
+   "options": "Email",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-04-22 10:01:29.913499",
+ "modified": "2026-04-22 12:27:03.636500",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Shop Rent Payment",

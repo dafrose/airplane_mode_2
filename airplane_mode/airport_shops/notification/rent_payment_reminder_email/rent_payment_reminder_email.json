@@ -1,0 +1,34 @@
+{
+ "attach_files": "",
+ "attach_print": 1,
+ "channel": "Email",
+ "creation": "2026-04-22 12:31:03.773129",
+ "date_changed": "period_start",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Shop Rent Payment",
+ "enabled": 1,
+ "event": "New",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "<p>Dear {{doc.tenant}},</p>\n\n<p>This is a reminder that <strong>rent is due</strong> for your shop lease.</p>\n\n<ul>\n  <li><strong>Payment</strong>: {{ doc.name }}</li>\n  <li><strong>Lease</strong>: {{ doc.lease_contract }}</li>\n  {% if doc.period_start %}<li><strong>Period</strong>: {{ frappe.utils.format_date(doc.period_start) }}{% if doc.period_end %} \u2013 {{ frappe.utils.format_date(doc.period_end) }}{% endif %}</li>{% endif %}\n  <li><strong>Amount due</strong>: {{ frappe.utils.fmt_money(doc.amount_due, currency=frappe.db.get_value(\"Company\", frappe.defaults.get_user_default(\"Company\"), \"default_currency\") or \"EUR\") }}</li>\n</ul>\n\n<p>Please arrange payment as agreed. If you have questions, reply to this email or contact the airport leasing office.</p>\n\n<p>Thank you,<br>{{ frappe.utils.get_defaults().get(\"company\") or \"Airport leasing\" }}</p>",
+ "message_type": "Markdown",
+ "modified": "2026-04-22 12:38:24.114647",
+ "modified_by": "Administrator",
+ "module": "Airport Shops",
+ "name": "Rent Payment Reminder Email",
+ "owner": "Administrator",
+ "print_format": "Shop Rent Payment Receipt",
+ "recipients": [
+  {
+   "condition": "doc.tenant_email",
+   "receiver_by_document_field": "tenant_email"
+  }
+ ],
+ "send_system_notification": 1,
+ "send_to_all_assignees": 0,
+ "sender": "Airport Manager",
+ "sender_email": "airport@manager.com",
+ "subject": "Rent is due for {{ doc.lease_contract }}"
+}

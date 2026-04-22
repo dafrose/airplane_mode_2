@@ -23,5 +23,6 @@ class ShopRentPayment(Document):
 		period_end: DF.Date | None
 		period_start: DF.Date | None
 		tenant: DF.Link | None
+		tenant_email: DF.Data | None
 	# end: auto-generated types
 	pass
