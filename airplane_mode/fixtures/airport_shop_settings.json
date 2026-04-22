@@ -1,0 +1,10 @@
+[
+ {
+  "default_rent_amount": 100.0,
+  "docstatus": 0,
+  "doctype": "Airport Shop Settings",
+  "enable_rent_reminders": 1,
+  "modified": "2026-04-22 10:55:28.626804",
+  "name": "Airport Shop Settings"
+ }
+]

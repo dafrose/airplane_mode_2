@@ -66,8 +66,17 @@
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2026-04-22 09:23:21.137345",
+ "links": [
+  {
+   "link_doctype": "Shop Lease Contract",
+   "link_fieldname": "tenant"
+  },
+  {
+   "link_doctype": "Shop Rent Payment",
+   "link_fieldname": "tenant"
+  }
+ ],
+ "modified": "2026-04-22 10:34:59.339708",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Shop Tenant",

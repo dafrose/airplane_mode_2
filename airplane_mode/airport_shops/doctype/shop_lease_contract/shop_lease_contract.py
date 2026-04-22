@@ -16,7 +16,7 @@ class ShopLeaseContract(Document):
 
 		airport_code: DF.Data | None
 		lease_expiry_date: DF.Date | None
-		lease_start_date: DF.Date | None
+		lease_start_date: DF.Date
 		rent: DF.Currency
 		shop: DF.Link
 		tenant: DF.Link
