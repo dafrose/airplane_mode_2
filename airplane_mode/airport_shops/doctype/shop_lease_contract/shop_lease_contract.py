@@ -1,7 +1,6 @@
 # Copyright (c) 2026, ALYF and contributors
 # For license information, please see license.txt
 
-# import frappe
 from frappe.model.document import Document
 
 
@@ -17,8 +16,12 @@ class ShopLeaseContract(Document):
 		airport_code: DF.Data | None
 		lease_expiry_date: DF.Date | None
 		lease_start_date: DF.Date
+		next_due_date: DF.Date | None
 		rent: DF.Currency
 		shop: DF.Link
 		tenant: DF.Link
 	# end: auto-generated types
-	pass
+
+	def before_insert(self):
+		# First row only: *Lease Start Date* is mandatory; *Next Due Date* seeds the rolling schedule.
+		self.next_due_date = self.lease_start_date

@@ -1,8 +1,11 @@
 # Copyright (c) 2026, ALYF and contributors
 # For license information, please see license.txt
 
-# import frappe
+from datetime import timedelta
+
+import frappe
 from frappe.model.document import Document
+from frappe.utils import getdate, nowdate
 
 
 class ShopRentPayment(Document):
@@ -22,8 +25,26 @@ class ShopRentPayment(Document):
 		lease_contract: DF.Link
 		period_end: DF.Date | None
 		period_start: DF.Date | None
-		status: DF.Literal["Due", "Payed"]
+		status: DF.Literal["Due", "Paid"]
 		tenant: DF.Link | None
 		tenant_email: DF.Data | None
 	# end: auto-generated types
-	pass
+
+	def after_insert(self):
+		if self.lease_contract and self.period_end:
+			following = getdate(self.period_end) + timedelta(days=1)
+			frappe.db.set_value(
+				"Shop Lease Contract",
+				self.lease_contract,
+				"next_due_date",
+				following,
+			)
+
+	def before_submit(self):
+		self.status = "Payed"
+		if not self.date_payed:
+			self.date_payed = nowdate()
+
+	def before_cancel(self):
+		self.status = "Due"
+		self.date_payed = None

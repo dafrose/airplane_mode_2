@@ -14,7 +14,8 @@
   "lease_expiry_date",
   "lease_start_date",
   "column_break_ertv",
-  "rent"
+  "rent",
+  "next_due_date"
  ],
  "fields": [
   {
@@ -70,12 +71,19 @@
    "fieldtype": "Data",
    "label": "Airport Code",
    "read_only": 1
+  },
+  {
+   "fieldname": "next_due_date",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "label": "Next Due Date",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-04-23 07:50:28.769022",
+ "modified": "2026-04-23 08:28:56.529085",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Shop Lease Contract",
