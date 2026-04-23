@@ -20,7 +20,7 @@ class ShopRentPayment(Document):
 		airport_code: DF.Data | None
 		amended_from: DF.Link | None
 		amount_due: DF.Currency
-		date_payed: DF.Date | None
+		date_paid: DF.Date | None
 		date_posted: DF.Date | None
 		lease_contract: DF.Link
 		period_end: DF.Date | None
@@ -41,10 +41,10 @@ class ShopRentPayment(Document):
 			)
 
 	def before_submit(self):
-		self.status = "Payed"
-		if not self.date_payed:
-			self.date_payed = nowdate()
+		self.status = "Paid"
+		if not self.date_paid:
+			self.date_paid = nowdate()
 
 	def before_cancel(self):
 		self.status = "Due"
-		self.date_payed = None
+		self.date_paid = None

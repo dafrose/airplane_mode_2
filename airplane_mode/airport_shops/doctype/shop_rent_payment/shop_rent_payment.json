@@ -19,7 +19,7 @@
   "period_end",
   "column_break_utrq",
   "date_posted",
-  "date_payed",
+  "date_paid",
   "section_break_dgps",
   "amended_from"
  ],
@@ -95,11 +95,6 @@
    "label": "Date Posted"
   },
   {
-   "fieldname": "date_payed",
-   "fieldtype": "Date",
-   "label": "Date Payed"
-  },
-  {
    "fetch_from": "lease_contract.tenant",
    "fieldname": "tenant",
    "fieldtype": "Link",
@@ -121,13 +116,18 @@
    "fieldtype": "Select",
    "label": "Status",
    "options": "Due\nPaid"
+  },
+  {
+   "fieldname": "date_paid",
+   "fieldtype": "Date",
+   "label": "Date Paid"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-04-23 09:29:37.664322",
+ "modified": "2026-04-23 09:40:02.742520",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Shop Rent Payment",
