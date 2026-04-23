@@ -14,7 +14,8 @@
   "lease_expiry_date",
   "lease_start_date",
   "column_break_ertv",
-  "rent"
+  "rent",
+  "billing_day_of_month"
  ],
  "fields": [
   {
@@ -70,12 +71,19 @@
    "fieldtype": "Data",
    "label": "Airport Code",
    "read_only": 1
+  },
+  {
+   "fieldname": "billing_day_of_month",
+   "fieldtype": "Int",
+   "label": "Billing Day of Month",
+   "non_negative": 1,
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-04-22 10:07:33.325213",
+ "modified": "2026-04-22 15:57:01.975591",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Shop Lease Contract",
