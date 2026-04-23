@@ -19,6 +19,7 @@ REQUIRED_ROLES = (
 	"Flight Crew Member",
 	"Passenger",
 	"Shop Tenant",
+	"Airport Shop Manager",
 )
 
 TEST_USERS: dict[str, tuple[str, ...]] = {

@@ -15,7 +15,6 @@ class ShopLeaseContract(Document):
 		from frappe.types import DF
 
 		airport_code: DF.Data | None
-		billing_day_of_month: DF.Int
 		lease_expiry_date: DF.Date | None
 		lease_start_date: DF.Date
 		rent: DF.Currency

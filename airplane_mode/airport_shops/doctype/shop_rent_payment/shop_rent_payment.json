@@ -9,6 +9,7 @@
   "section_break_rinh",
   "lease_contract",
   "amount_due",
+  "status",
   "column_break_yogd",
   "airport_code",
   "tenant",
@@ -113,13 +114,20 @@
    "label": "Tenant Email",
    "options": "Email",
    "read_only": 1
+  },
+  {
+   "default": "Due",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Due\nPayed"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-04-22 12:27:03.636500",
+ "modified": "2026-04-23 07:49:29.774108",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Shop Rent Payment",

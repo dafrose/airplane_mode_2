@@ -22,6 +22,7 @@ class ShopRentPayment(Document):
 		lease_contract: DF.Link
 		period_end: DF.Date | None
 		period_start: DF.Date | None
+		status: DF.Literal["Due", "Payed"]
 		tenant: DF.Link | None
 		tenant_email: DF.Data | None
 	# end: auto-generated types
