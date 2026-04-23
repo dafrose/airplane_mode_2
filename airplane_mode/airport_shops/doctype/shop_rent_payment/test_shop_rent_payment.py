@@ -5,7 +5,10 @@ import frappe
 from frappe.tests.utils import FrappeTestCase
 from frappe.utils import getdate, today
 
-from airplane_mode.tests.test_rent_scheduler import _make_lease_bundle
+from airplane_mode.tests.test_rent_scheduler import (
+	_automated_message_for_payment,
+	_make_lease_bundle,
+)
 
 
 class TestShopRentPayment(FrappeTestCase):
@@ -39,6 +42,8 @@ class TestShopRentPayment(FrappeTestCase):
 				filters={"lease_contract": bundle["lease"]},
 				pluck="name",
 			):
+				for comm in _automated_message_for_payment(name):
+					frappe.delete_doc("Communication", comm, force=True, ignore_permissions=True)
 				frappe.delete_doc("Shop Rent Payment", name, force=True, ignore_permissions=True)
 			for dt, key in (
 				("Shop Lease Contract", "lease"),

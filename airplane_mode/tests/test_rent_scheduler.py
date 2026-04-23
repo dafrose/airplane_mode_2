@@ -17,7 +17,11 @@ test_dependencies = [
 	"Shop Lease Contract",
 	"Shop Rent Payment",
 	"Airport Shop Settings",
+	"Notification",
 ]
+
+# Standard app **Notification** (exported JSON under `airport_shops/notification/`).
+RENT_PAYMENT_REMINDER_NOTIFICATION = "Rent Payment Reminder Email"
 
 
 def _make_lease_bundle(*, suffix: str) -> dict:
@@ -65,6 +69,18 @@ def _make_lease_bundle(*, suffix: str) -> dict:
 	}
 
 
+def _automated_message_for_payment(payment_name: str) -> list[str]:
+	return frappe.get_all(
+		"Communication",
+		filters={
+			"reference_doctype": "Shop Rent Payment",
+			"reference_name": payment_name,
+			"communication_type": "Automated Message",
+		},
+		pluck="name",
+	)
+
+
 class TestRentScheduler(FrappeTestCase):
 	def setUp(self):
 		frappe.set_user("Administrator")
@@ -84,6 +100,8 @@ class TestRentScheduler(FrappeTestCase):
 				filters={"lease_contract": b["lease"]},
 				pluck="name",
 			):
+				for comm in _automated_message_for_payment(name):
+					frappe.delete_doc("Communication", comm, force=True, ignore_permissions=True)
 				frappe.delete_doc("Shop Rent Payment", name, force=True, ignore_permissions=True)
 			for dt, key in (
 				("Shop Lease Contract", "lease"),
@@ -151,3 +169,40 @@ class TestRentScheduler(FrappeTestCase):
 		self.assertEqual(count, 1)
 		next_due = frappe.db.get_value("Shop Lease Contract", self._bundle["lease"], "next_due_date")
 		self.assertEqual(str(next_due), "2026-02-15")
+
+	def test_rent_reminder_notification_on_new_payment(self):
+		if not frappe.db.exists("Notification", RENT_PAYMENT_REMINDER_NOTIFICATION):
+			self.skipTest(
+				f"Install/sync **Notification** `{RENT_PAYMENT_REMINDER_NOTIFICATION}` "
+				"(app export) to run this test."
+			)
+
+		prev_enabled = frappe.db.get_value("Notification", RENT_PAYMENT_REMINDER_NOTIFICATION, "enabled")
+		frappe.db.set_value("Notification", RENT_PAYMENT_REMINDER_NOTIFICATION, "enabled", 1)
+
+		sfx = frappe.generate_hash(length=8)
+		self._bundle = _make_lease_bundle(suffix=sfx)
+		try:
+			pay = frappe.get_doc(
+				{
+					"doctype": "Shop Rent Payment",
+					"lease_contract": self._bundle["lease"],
+					"amount_due": 100.0,
+					"period_start": "2026-05-01",
+					"period_end": "2026-05-31",
+				}
+			).insert(ignore_permissions=True)
+
+			comms = _automated_message_for_payment(pay.name)
+			self.assertTrue(
+				comms,
+				"Desk **Notification** (New → email) should create an **Automated Message** "
+				"**Communication** linked to the **Shop Rent Payment** (see `Notification.send_an_email`).",
+			)
+		finally:
+			frappe.db.set_value(
+				"Notification",
+				RENT_PAYMENT_REMINDER_NOTIFICATION,
+				"enabled",
+				prev_enabled,
+			)
