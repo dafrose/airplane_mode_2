@@ -12,6 +12,17 @@ from dateutil.relativedelta import relativedelta
 from frappe.utils import getdate, today
 
 
+@frappe.whitelist()
+def enqueue_create_due_shop_rent_payments() -> None:
+	"""Queue manual run of due-payment creation from Desk list view."""
+	frappe.only_for(("System Manager", "Airport Authority Personnel"))
+	frappe.enqueue(
+		"airplane_mode.airport_shops.tasks.create_due_shop_rent_payments",
+		queue="default",
+		job_name="airplane_mode.create_due_shop_rent_payments.manual",
+	)
+
+
 def create_due_shop_rent_payments() -> None:
 	"""Create **Shop Rent Payment** rows when due (see issue #8).
 

@@ -9,11 +9,9 @@
   "section_break_rinh",
   "lease_contract",
   "amount_due",
-  "status",
-  "column_break_yogd",
+  "column_break_ssgq",
   "airport_code",
-  "tenant",
-  "tenant_email",
+  "status",
   "section_break_rvch",
   "period_start",
   "period_end",
@@ -21,6 +19,11 @@
   "date_posted",
   "date_paid",
   "section_break_dgps",
+  "tenant",
+  "tenant_email",
+  "column_break_zxwu",
+  "address",
+  "section_break_tkqo",
   "amended_from"
  ],
  "fields": [
@@ -50,13 +53,13 @@
    "fieldname": "period_start",
    "fieldtype": "Date",
    "label": "Period Start",
-   "read_only": 1
+   "reqd": 1
   },
   {
    "fieldname": "period_end",
    "fieldtype": "Date",
    "label": "Period End",
-   "read_only": 1
+   "reqd": 1
   },
   {
    "bold": 1,
@@ -76,18 +79,16 @@
    "fieldtype": "Column Break"
   },
   {
+   "bold": 1,
    "fieldname": "section_break_dgps",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Tenant Details"
   },
   {
    "fetch_from": "lease_contract.airport_code",
    "fieldname": "airport_code",
    "fieldtype": "Data",
    "label": "Airport Code"
-  },
-  {
-   "fieldname": "column_break_yogd",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "date_posted",
@@ -114,6 +115,7 @@
    "default": "Due",
    "fieldname": "status",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Status",
    "options": "Due\nPaid"
   },
@@ -121,13 +123,33 @@
    "fieldname": "date_paid",
    "fieldtype": "Date",
    "label": "Date Paid"
+  },
+  {
+   "fieldname": "column_break_ssgq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_zxwu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "tenant.address",
+   "fetch_if_empty": 1,
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_tkqo",
+   "fieldtype": "Section Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-04-23 09:40:02.742520",
+ "modified": "2026-04-28 09:17:25.255587",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Shop Rent Payment",

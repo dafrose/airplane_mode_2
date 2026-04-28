@@ -17,14 +17,15 @@ class ShopRentPayment(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
+		address: DF.SmallText | None
 		airport_code: DF.Data | None
 		amended_from: DF.Link | None
 		amount_due: DF.Currency
 		date_paid: DF.Date | None
 		date_posted: DF.Date | None
 		lease_contract: DF.Link
-		period_end: DF.Date | None
-		period_start: DF.Date | None
+		period_end: DF.Date
+		period_start: DF.Date
 		status: DF.Literal["Due", "Paid"]
 		tenant: DF.Link | None
 		tenant_email: DF.Data | None

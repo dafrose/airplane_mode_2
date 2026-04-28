@@ -4,7 +4,7 @@
 
 frappe.ui.form.on("Shop Rent Payment", {
 	refresh(frm) {
-		frappe.after(() => {
+		frappe.after_ajax(() => {
 			if (frm.is_new() || frm.doc.docstatus !== 0) {
 				return;
 			}
