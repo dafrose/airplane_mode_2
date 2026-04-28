@@ -9,14 +9,14 @@ TENANT_B = "shop_tenant_b@airplane.test"
 
 
 def _new_tenant(**kwargs):
-	return frappe.get_doc(
-		{
-			"doctype": "Shop Tenant",
-			"first_name": kwargs.get("first_name", "Sync"),
-			"last_name": kwargs.get("last_name", "Test"),
-			**kwargs,
-		}
-	)
+	data = {
+		"doctype": "Shop Tenant",
+		"first_name": kwargs.get("first_name", "Sync"),
+		"last_name": kwargs.get("last_name", "Test"),
+		"email": kwargs.get("email", f"sync_{frappe.generate_hash(length=8)}@airplane.test"),
+	}
+	data.update(kwargs)
+	return frappe.get_doc(data)
 
 
 class TestShopTenantUserSync(FrappeTestCase):

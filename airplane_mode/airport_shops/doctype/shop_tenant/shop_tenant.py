@@ -45,7 +45,7 @@ class ShopTenant(Document):
 		from frappe.types import DF
 
 		address: DF.SmallText | None
-		email: DF.Data | None
+		email: DF.Data
 		first_name: DF.Data
 		full_name: DF.Data | None
 		last_name: DF.Data

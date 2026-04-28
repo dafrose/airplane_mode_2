@@ -25,7 +25,8 @@
    "fieldname": "email",
    "fieldtype": "Data",
    "label": "Email",
-   "options": "email"
+   "options": "email",
+   "reqd": 1
   },
   {
    "fieldname": "phone",
@@ -76,7 +77,7 @@
    "link_fieldname": "tenant"
   }
  ],
- "modified": "2026-04-22 10:34:59.339708",
+ "modified": "2026-04-28 10:09:50.202017",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Shop Tenant",

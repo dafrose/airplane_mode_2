@@ -27,6 +27,7 @@ class TestShopLeaseContract(FrappeTestCase):
 				"doctype": "Shop Tenant",
 				"first_name": "L",
 				"last_name": f"Seed{sfx}",
+				"email": f"lease_seed_{sfx}@example.com",
 			}
 		).insert(ignore_permissions=True)
 		lease = None
