@@ -75,6 +75,24 @@ def sync_tickets_gate_for_flight(flight_name: str) -> None:
 			user=user,
 		)
 
+		user_email = frappe.db.get_value("User", user, "email")
+		if user_email:
+			from frappe.desk.doctype.notification_log.notification_log import (
+				enqueue_create_notification,
+			)
+
+			enqueue_create_notification(
+				[user_email],
+				{
+					"type": "Alert",
+					"document_type": "Airplane Ticket",
+					"document_name": row.name,
+					"subject": _("Boarding gate changed for ticket {0}").format(row.name),
+					"from_user": "Administrator",
+					"link": get_airplane_ticket_portal_url(row.name),
+				},
+			)
+
 
 class AirplaneFlight(WebsiteGenerator):
 	# begin: auto-generated types
@@ -109,6 +127,7 @@ class AirplaneFlight(WebsiteGenerator):
 		airline = frappe.db.get_value("Airplane", self.airplane, "airline")
 		context.title = f"{airline} — {self.source_airport_code} → {self.destination_airport_code}"
 		context.book_flight_url = f"/{BOOK_FLIGHT_WEB_FORM_ROUTE}/new?flight={quoted(self.name)}"
+		context.no_breadcrumbs = True
 		return context
 
 	def before_save(self):
@@ -142,6 +161,7 @@ def get_list_context(context):
 	context.title = _("Flights")
 	context.order_by = "date_of_departure asc, time_of_departure asc"
 	context.hide_filters = False
+	context.no_breadcrumbs = True
 	tpl = meta.get_list_template() or "templates/includes/list/list.html"
 	context.template = tpl
 	context.list_template = tpl

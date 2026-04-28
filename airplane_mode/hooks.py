@@ -29,8 +29,11 @@ app_license = "mit"
 # app_include_js = "/assets/airplane_mode/js/airplane_mode.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/airplane_mode/css/airplane_mode.css"
-web_include_js = ["/assets/airplane_mode/js/airplane_gate_alerts.js"]
+web_include_css = ["/assets/airplane_mode/css/passenger_portal.css"]
+web_include_js = [
+	"/assets/airplane_mode/js/airplane_gate_alerts.js",
+	"/assets/airplane_mode/js/passenger_portal_notifications.js",
+]
 
 # include custom scss in every website theme (without file extension ".scss")
 # website_theme_scss = "airplane_mode/public/scss/website"
@@ -74,10 +77,11 @@ web_include_js = ["/assets/airplane_mode/js/airplane_gate_alerts.js"]
 # ----------
 
 # add methods and filters to jinja environment
-# jinja = {
-# 	"methods": "airplane_mode.utils.jinja_methods",
-# 	"filters": "airplane_mode.utils.jinja_filters"
-# }
+jinja = {
+	"methods": [
+		"airplane_mode.passenger_portal_urls.passenger_portal_links",
+	],
+}
 
 # Installation
 # ------------

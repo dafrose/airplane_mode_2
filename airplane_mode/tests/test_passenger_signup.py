@@ -5,10 +5,8 @@ import frappe
 from frappe.tests.utils import FrappeTestCase
 from frappe.utils import set_request
 
-from airplane_mode.airplane_mode.doctype.airplane_flight.airplane_flight import (
-	FLIGHTS_WEB_ROUTE,
-)
 from airplane_mode.api import passenger_signup
+from airplane_mode.passenger_portal_urls import PASSENGER_HOME_ROUTE
 
 
 def _cleanup_signup_user(email: str) -> None:
@@ -41,7 +39,7 @@ class TestPassengerSignup(FrappeTestCase):
 			last_name="Tester",
 			date_of_birth="1995-06-15",
 		)
-		self.assertEqual(out["redirect_to"], f"/{FLIGHTS_WEB_ROUTE}")
+		self.assertEqual(out["redirect_to"], f"/{PASSENGER_HOME_ROUTE}")
 		self.assertTrue(frappe.db.exists("User", email))
 		pax_name = frappe.db.get_value("Flight Passenger", {"user": email}, "name")
 		self.assertTrue(pax_name)

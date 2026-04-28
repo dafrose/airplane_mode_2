@@ -14,8 +14,8 @@ from frappe.utils import cint, escape_html, getdate, validate_email_address
 
 from airplane_mode.airplane_mode.doctype.airplane_flight.airplane_flight import (
 	BOOK_FLIGHT_WEB_FORM_ROUTE,
-	FLIGHTS_WEB_ROUTE,
 )
+from airplane_mode.passenger_portal_urls import PASSENGER_HOME_ROUTE
 
 BOOK_TICKET_ROUTE = BOOK_FLIGHT_WEB_FORM_ROUTE
 
@@ -103,7 +103,7 @@ def passenger_signup(
 		raise
 
 	return {
-		"redirect_to": f"/{FLIGHTS_WEB_ROUTE}",
+		"redirect_to": f"/{PASSENGER_HOME_ROUTE}",
 	}
 
 

@@ -11,6 +11,7 @@ don't depend on hand-clicking through the Desk UI on every fresh site.
 from __future__ import annotations
 
 import frappe
+from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 REQUIRED_ROLES = (
 	"Airport Authority Personnel",
@@ -33,13 +34,34 @@ TEST_USERS: dict[str, tuple[str, ...]] = {
 
 def after_install():
 	_ensure_roles()
+	_ensure_notification_log_portal_hidden_field()
 	frappe.db.commit()
 
 
 def before_tests():
 	_ensure_roles()
 	_ensure_test_users()
+	_ensure_notification_log_portal_hidden_field()
 	frappe.db.commit()
+
+
+def _ensure_notification_log_portal_hidden_field() -> None:
+	"""Add *Hidden from portal* on **Notification Log** (Custom Field, not core JSON)."""
+	create_custom_fields(
+		{
+			"Notification Log": [
+				{
+					"fieldname": "hidden_from_portal",
+					"fieldtype": "Check",
+					"label": "Hidden from portal",
+					"default": "0",
+					"insert_after": "read",
+					"read_only": 0,
+					"description": "Dismissed from the website bell; row kept for Desk.",
+				}
+			]
+		}
+	)
 
 
 def _ensure_roles() -> None:

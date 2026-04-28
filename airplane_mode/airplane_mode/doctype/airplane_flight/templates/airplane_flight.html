@@ -1,6 +1,6 @@
-{% extends "templates/web.html" %}
+{% extends "templates/passenger_portal_page.html" %}
 
-{% block page_content %}
+{% block passenger_portal_inner %}
 {% set airline = frappe.db.get_value("Airplane", doc.airplane, "airline") %}
 <div class="flight-detail">
 	<h1 class="mb-4">{{ title }}</h1>

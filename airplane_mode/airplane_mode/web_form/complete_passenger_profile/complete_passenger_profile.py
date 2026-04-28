@@ -1,7 +1,10 @@
 import frappe
 
+from airplane_mode.passenger_portal_urls import apply_passenger_web_form_template
+
 
 def get_context(context):
+	apply_passenger_web_form_template(context)
 	# Existing document: `load_form_data` already set `reference_doc`
 	if frappe.form_dict.get("name"):
 		return None

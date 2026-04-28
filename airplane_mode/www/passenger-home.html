@@ -1,0 +1,39 @@
+{% extends "templates/passenger_portal_page.html" %}
+
+{% block title %}{{ _("My Tickets") }}{% endblock %}
+
+{% block passenger_portal_inner %}
+<div class="passenger-home">
+	{% if missing_profile %}
+	<p class="text-muted">{{ _("No passenger profile is linked to this account.") }}</p>
+	<p><a class="btn btn-primary" href="{{ passenger_portal_links().profile }}">{{ _("Complete profile") }}</a></p>
+	{% else %}
+	{% if tickets %}
+	<table class="passenger-home-tickets mt-4">
+		<thead>
+			<tr>
+				<th>{{ _("Ticket") }}</th>
+				<th>{{ _("Flight") }}</th>
+				<th>{{ _("Departure") }}</th>
+				<th>{{ _("Gate") }}</th>
+				<th>{{ _("Status") }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for t in tickets %}
+			<tr>
+				<td><a href="{{ t.ticket_url }}">{{ t.name }}</a></td>
+				<td>{{ t.flight_label }}</td>
+				<td>{{ t.departure }}</td>
+				<td>{{ t.gate_number or "" }}</td>
+				<td>{{ t.status or "" }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% else %}
+	<p class="text-muted mt-4">{{ _("You have no draft tickets yet. Book a flight to see it here.") }}</p>
+	{% endif %}
+	{% endif %}
+</div>
+{% endblock %}

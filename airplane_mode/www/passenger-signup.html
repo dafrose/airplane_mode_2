@@ -1,4 +1,4 @@
-{% extends "templates/web.html" %}
+{% extends "templates/passenger_portal_page.html" %}
 
 {% block title %}{{ _("Passenger sign up") }}{% endblock %}
 
@@ -48,19 +48,20 @@
 </style>
 {% endblock %}
 
-{% block page_content %}
+{% block passenger_portal_inner %}
 <div class="passenger-signup-card">
 	{% if not is_guest %}
 	<h1>{{ _("You are already signed in") }}</h1>
-	<p class="note">{{ _("Browse flights or sign out.") }}</p>
+	<p class="note">{{ _("Go to your travel dashboard, browse flights, or sign out.") }}</p>
 	<p class="note">
-		<a href="{{ flights_list_url }}">{{ _("Flights") }}</a>
+		<a href="{{ passenger_portal_links().home }}">{{ _("My Tickets") }}</a>
+		· <a href="{{ passenger_portal_links().flights }}">{{ _("Flights") }}</a>
 		{% if has_passenger_profile %}
-		· <a href="{{ book_ticket_new_url }}">{{ _("Book a flight (web form)") }}</a>
+		· <a href="{{ passenger_portal_links().book_new }}">{{ _("New booking") }}</a>
 		{% else %}
 		{{ _("No passenger profile is linked to this account yet. Ask an administrator to create one, or register with a new email.") }}
 		{% endif %}
-		· <a href="/login?cmd=logout">{{ _("Log out") }}</a>
+		· <a href="{{ passenger_portal_links().logout }}">{{ _("Log out") }}</a>
 	</p>
 	{% else %}
 	<h1>{{ _("Create a passenger account") }}</h1>
