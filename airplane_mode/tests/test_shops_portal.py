@@ -116,7 +116,7 @@ class TestShopsPortalContext(FrappeTestCase):
 		self.assertTrue(ctx.picnic_css)
 		self.assertTrue(ctx.shops_portal_url.endswith("/shops"))
 		self.assertTrue(ctx.success_url.endswith("/shops"))
-		self.assertEqual(ctx.success_title, shop_lead_module._SHOP_LEAD_SUCCESS_TITLE)
+		self.assertEqual(ctx.success_title, shop_lead_module._shop_lead_success_title())
 		self.assertEqual(ctx.web_form_doc["success_url"], ctx.success_url)
 
 	def test_shop_lead_success_context_updates_web_form_doc(self):
@@ -125,7 +125,7 @@ class TestShopsPortalContext(FrappeTestCase):
 		self.assertTrue(ctx.success_url.endswith("/shops"))
 		self.assertEqual(
 			ctx.web_form_doc["success_message"],
-			shop_lead_module._SHOP_LEAD_SUCCESS_MESSAGE,
+			shop_lead_module._shop_lead_success_message(),
 		)
 
 	def test_shop_lead_page_context(self):
