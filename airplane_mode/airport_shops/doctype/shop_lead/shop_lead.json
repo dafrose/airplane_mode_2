@@ -1,0 +1,141 @@
+{
+ "actions": [],
+ "autoname": "SHOPLEAD-.#####",
+ "creation": "2026-04-29 09:03:27.480139",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "contact_information_section",
+  "first_name",
+  "last_name",
+  "column_break_ufhy",
+  "email",
+  "phone",
+  "shop_section",
+  "shop",
+  "column_break_sswk",
+  "projected_start_date",
+  "section_break_ptqu",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "contact_information_section",
+   "fieldtype": "Section Break",
+   "label": "Contact Information"
+  },
+  {
+   "fieldname": "first_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "First Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "last_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Last Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_ufhy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "mandatory_depends_on": "eval:!doc.phone",
+   "options": "Email"
+  },
+  {
+   "fieldname": "shop_section",
+   "fieldtype": "Section Break",
+   "label": "Shop"
+  },
+  {
+   "fieldname": "shop",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Shop",
+   "options": "Shop",
+   "reqd": 1
+  },
+  {
+   "fieldname": "projected_start_date",
+   "fieldtype": "Date",
+   "label": "Projected Start Date"
+  },
+  {
+   "fieldname": "column_break_sswk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_ptqu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "New",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "New\nContacted\nScheduled\nSigned\nWithdrawn"
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Phone",
+   "label": "Phone",
+   "mandatory_depends_on": "eval:!doc.email"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-29 09:49:38.393401",
+ "modified_by": "Administrator",
+ "module": "Airport Shops",
+ "name": "Shop Lead",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Blue",
+   "title": "New"
+  },
+  {
+   "color": "Cyan",
+   "title": "Contacted"
+  },
+  {
+   "color": "Yellow",
+   "title": "Scheduled"
+  },
+  {
+   "color": "Green",
+   "title": "Signed"
+  },
+  {
+   "color": "Red",
+   "title": "Withdrawn"
+  }
+ ]
+}

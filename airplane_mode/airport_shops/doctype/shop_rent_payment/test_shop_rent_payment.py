@@ -1,6 +1,7 @@
 # Copyright (c) 2026, ALYF and Contributors
 # See license.txt
 
+from io import BytesIO
 from unittest.mock import patch
 
 import frappe
@@ -18,6 +19,7 @@ from airplane_mode.tests.test_rent_scheduler import (
 test_dependencies = [
 	"Airport",
 	"Shop",
+	"Shop Type",
 	"Shop Tenant",
 	"Shop Lease Contract",
 	"Shop Rent Payment",
@@ -45,6 +47,22 @@ def _submit_receipt_notification_row():
 def _sendmail_patch():
 	"""Desk **Notification** may fire on submit; absorb outbound mail in tests."""
 	return patch("frappe.sendmail")
+
+
+def _minimal_pdf_bytes() -> bytes:
+	"""Tiny valid PDF for tests (passes **File** PDF checks without **wkhtmltopdf**)."""
+	from pypdf import PdfWriter
+
+	buf = BytesIO()
+	w = PdfWriter()
+	w.add_blank_page(width=72, height=72)
+	w.write(buf)
+	return buf.getvalue()
+
+
+def _get_pdf_patch():
+	# `get_print` imports **get_pdf** inside the function; patch the definition module.
+	return patch("frappe.utils.pdf.get_pdf", return_value=_minimal_pdf_bytes())
 
 
 def _cancel_payment_in_test(pay):
@@ -111,7 +129,7 @@ class TestShopRentPayment(FrappeTestCase):
 		bundle = _make_lease_bundle(suffix=sfx)
 		try:
 			pay = _insert_due_payment(bundle)
-			with _sendmail_patch():
+			with _sendmail_patch(), _get_pdf_patch():
 				pay.submit()
 			pay.reload()
 			self.assertEqual(pay.status, "Paid")
@@ -146,7 +164,7 @@ class TestShopRentPayment(FrappeTestCase):
 		)
 		try:
 			pay = _insert_due_payment(bundle)
-			with patch("frappe.sendmail") as mock_sendmail:
+			with patch("frappe.sendmail") as mock_sendmail, _get_pdf_patch():
 				pay.submit()
 
 			comms = _automated_message_for_payment(pay.name)
@@ -192,7 +210,7 @@ class TestShopRentPayment(FrappeTestCase):
 		bundle = _make_lease_bundle(suffix=sfx)
 		try:
 			pay = _insert_due_payment(bundle)
-			with _sendmail_patch():
+			with _sendmail_patch(), _get_pdf_patch():
 				pay.submit()
 
 			pdf_rows = [

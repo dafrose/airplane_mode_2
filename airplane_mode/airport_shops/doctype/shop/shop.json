@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_guest_to_view": 1,
  "allow_rename": 1,
  "autoname": "{airport_code}.-SHOP-.###",
  "creation": "2026-04-21 17:12:00.384109",
@@ -14,8 +15,11 @@
   "area",
   "section_break_zlwr",
   "status",
-  "column_break_jxbg",
-  "is_published"
+  "web_form_settings_section",
+  "is_published",
+  "route",
+  "column_break_vvlf",
+  "title"
  ],
  "fields": [
   {
@@ -80,20 +84,46 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "column_break_jxbg",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "shop_type",
    "fieldtype": "Link",
    "label": "Shop Type",
-   "options": "Shop Type"
+   "options": "Shop Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "web_form_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Web Form Settings"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "is_virtual": 1,
+   "label": "Title",
+   "options": "f\"{doc.name}, area: {doc.area} m\u00b2, type: {doc.shop_type}\"",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_vvlf",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
+ "has_web_view": 1,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2026-04-29 08:44:18.146923",
+ "is_published_field": "is_published",
+ "links": [
+  {
+   "link_doctype": "Shop Lease Contract",
+   "link_fieldname": "shop"
+  }
+ ],
+ "modified": "2026-04-29 09:54:57.262362",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Shop",
@@ -125,9 +155,11 @@
    "write": 1
   }
  ],
+ "route": "shops",
  "row_format": "Dynamic",
  "rows_threshold_for_grid_search": 20,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "website_search_field": "shop_type"
 }

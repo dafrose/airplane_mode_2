@@ -9,10 +9,12 @@ import frappe
 from frappe.tests.utils import FrappeTestCase
 
 from airplane_mode.airport_shops.tasks import create_due_shop_rent_payments
+from airplane_mode.tests.helpers import get_shop_type_for_tests
 
 test_dependencies = [
 	"Airport",
 	"Shop",
+	"Shop Type",
 	"Shop Tenant",
 	"Shop Lease Contract",
 	"Shop Rent Payment",
@@ -41,6 +43,7 @@ def _make_lease_bundle(*, suffix: str) -> dict:
 			"doctype": "Shop",
 			"airport": ap.name,
 			"area": 42.0,
+			"shop_type": get_shop_type_for_tests(),
 		}
 	).insert(ignore_permissions=True)
 	tenant = frappe.get_doc(

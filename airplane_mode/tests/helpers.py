@@ -103,3 +103,13 @@ def create_test_ticket(
 	doc.insert(ignore_permissions=True)
 	doc.flags.ignore_permissions = False
 	return doc
+
+
+def get_shop_type_for_tests() -> str:
+	"""Return a **Shop Type** name for inserting **Shop** rows (mandatory on many sites)."""
+	name = frappe.db.get_value("Shop Type", {"enabled": 1}, "name", order_by="name asc")
+	if not name:
+		name = frappe.db.get_value("Shop Type", {}, "name", order_by="name asc")
+	if not name:
+		raise AssertionError("No Shop Type rows; migrate Shop Type fixtures or create one.")
+	return name

@@ -2,10 +2,10 @@
 # For license information, please see license.txt
 
 # import frappe
-from frappe.website.website_generator import WebsiteGenerator
+from frappe.model.document import Document
 
 
-class Shop(WebsiteGenerator):
+class ShopLead(Document):
 	# begin: auto-generated types
 	# This code is auto-generated. Do not modify anything in this block.
 
@@ -14,14 +14,12 @@ class Shop(WebsiteGenerator):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
-		airport: DF.Link
-		airport_code: DF.Data | None
-		area: DF.Float
-		is_published: DF.Check
-		route: DF.Data | None
-		shop_number: DF.Int
-		shop_type: DF.Link
-		status: DF.Literal["Available", "Occupied"]
-		title: DF.Data | None
+		email: DF.Data | None
+		first_name: DF.Data
+		last_name: DF.Data
+		phone: DF.Phone | None
+		projected_start_date: DF.Date | None
+		shop: DF.Link
+		status: DF.Literal["New", "Contacted", "Scheduled", "Signed", "Withdrawn"]
 	# end: auto-generated types
 	pass
