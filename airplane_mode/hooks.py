@@ -93,6 +93,7 @@ after_install = "airplane_mode.install.after_install"
 # --------
 fixtures = [
 	"Airport Shop Settings",
+	"Shop Type",
 ]
 
 # Uninstallation

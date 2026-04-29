@@ -5,7 +5,7 @@
 from frappe.model.document import Document
 
 
-class Shop(Document):
+class ShopType(Document):
 	# begin: auto-generated types
 	# This code is auto-generated. Do not modify anything in this block.
 
@@ -14,12 +14,6 @@ class Shop(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
-		airport: DF.Link
-		airport_code: DF.Data | None
-		area: DF.Float
-		is_published: DF.Check
-		shop_number: DF.Int
-		shop_type: DF.Link | None
-		status: DF.Literal["Available", "Occupied"]
+		enabled: DF.Check
 	# end: auto-generated types
 	pass

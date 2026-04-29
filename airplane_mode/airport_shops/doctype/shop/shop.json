@@ -85,14 +85,15 @@
   },
   {
    "fieldname": "shop_type",
-   "fieldtype": "Data",
-   "label": "Shop Type"
+   "fieldtype": "Link",
+   "label": "Shop Type",
+   "options": "Shop Type"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-04-22 07:16:51.702585",
+ "modified": "2026-04-29 08:44:18.146923",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Shop",
