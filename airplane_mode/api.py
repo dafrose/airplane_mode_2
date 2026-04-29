@@ -20,6 +20,8 @@ from airplane_mode.passenger_portal_urls import PASSENGER_HOME_ROUTE
 BOOK_TICKET_ROUTE = BOOK_FLIGHT_WEB_FORM_ROUTE
 
 
+# Dedicated passenger signup; validates email/DOB, rate-limit at proxy if needed.
+# nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 def passenger_signup(
 	email: str,

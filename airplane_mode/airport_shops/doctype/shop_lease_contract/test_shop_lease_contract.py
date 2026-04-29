@@ -69,7 +69,6 @@ class TestShopLeaseContract(FrappeTestCase):
 			):
 				if frappe.db.exists(dt, nm):
 					frappe.delete_doc(dt, nm, force=True, ignore_permissions=True)
-			frappe.db.commit()
 
 	def test_shop_status_occupied_when_lease_expiry_in_future(self):
 		frappe.set_user("Administrator")
@@ -121,7 +120,6 @@ class TestShopLeaseContract(FrappeTestCase):
 			):
 				if frappe.db.exists(dt, nm):
 					frappe.delete_doc(dt, nm, force=True, ignore_permissions=True)
-			frappe.db.commit()
 
 	def test_shop_status_available_when_lease_expired_today_or_earlier(self):
 		frappe.set_user("Administrator")
@@ -185,7 +183,6 @@ class TestShopLeaseContract(FrappeTestCase):
 			):
 				if frappe.db.exists(dt, nm):
 					frappe.delete_doc(dt, nm, force=True, ignore_permissions=True)
-			frappe.db.commit()
 
 	def test_validate_sets_occupied_when_expiry_moves_from_past_to_future(self):
 		frappe.set_user("Administrator")
@@ -240,7 +237,6 @@ class TestShopLeaseContract(FrappeTestCase):
 			):
 				if frappe.db.exists(dt, nm):
 					frappe.delete_doc(dt, nm, force=True, ignore_permissions=True)
-			frappe.db.commit()
 
 	def test_on_trash_sets_shop_available(self):
 		frappe.set_user("Administrator")
@@ -292,4 +288,3 @@ class TestShopLeaseContract(FrappeTestCase):
 			):
 				if frappe.db.exists(dt, nm):
 					frappe.delete_doc(dt, nm, force=True, ignore_permissions=True)
-			frappe.db.commit()

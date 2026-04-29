@@ -73,7 +73,6 @@ def _cancel_payment_in_test(pay):
 	if pay.docstatus != 2:
 		with _sendmail_patch():
 			pay.save()
-		frappe.db.commit()
 		pay.reload()
 
 
@@ -106,7 +105,6 @@ def _cleanup_shop_rent_scenario(bundle: dict) -> None:
 	):
 		if frappe.db.exists(dt, bundle[key]):
 			frappe.delete_doc(dt, bundle[key], force=True, ignore_permissions=True)
-	frappe.db.commit()
 
 
 def _insert_due_payment(bundle: dict):

@@ -23,7 +23,6 @@ class TestShopTenantUserSync(FrappeTestCase):
 	def tearDown(self):
 		for name in frappe.get_all("Shop Tenant", filters={"last_name": "SyncTest"}, pluck="name"):
 			frappe.delete_doc("Shop Tenant", name, force=True, ignore_permissions=True)
-		frappe.db.commit()
 
 	def test_linking_user_grants_user_permission_and_role(self):
 		frappe.set_user("Administrator")

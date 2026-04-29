@@ -4,7 +4,6 @@
 """Context for ``www/passenger-home.html`` (passenger dashboard)."""
 
 import frappe
-from frappe import _
 from frappe.utils import format_date, format_time
 
 from airplane_mode.airplane_mode.doctype.airplane_flight.airplane_flight import (
@@ -55,10 +54,9 @@ def get_context(context):
 		row.ticket_url = get_airplane_ticket_portal_url(row.name)
 		f = flights.get(row.flight)
 		if f:
-			row.flight_label = _("{0} \u2192 {1}").format(
-				f.source_airport_code or "",
-				f.destination_airport_code or "",
-			)
+			src = f.source_airport_code or ""
+			dst = f.destination_airport_code or ""
+			row.flight_label = f"{src} → {dst}"
 			parts = []
 			if f.date_of_departure:
 				parts.append(format_date(f.date_of_departure))

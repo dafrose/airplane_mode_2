@@ -84,7 +84,11 @@ class ShopRentPayment(Document):
 			self.name,
 			is_private=1,
 		)
-		self.modified = frappe.db.get_value(self.doctype, self.name, "modified")
+		self.db_set(
+			"modified",
+			frappe.db.get_value(self.doctype, self.name, "modified"),
+			update_modified=False,
+		)
 
 	def before_cancel(self):
 		self.status = "Due"

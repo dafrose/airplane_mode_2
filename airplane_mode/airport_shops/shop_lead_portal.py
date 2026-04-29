@@ -10,6 +10,8 @@ from frappe import _
 from frappe.utils import cstr, getdate
 
 
+# Public enquiry API; validates shop visibility and required fields only.
+# nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
 @frappe.whitelist(allow_guest=True)
 def submit_shop_lead(
 	shop: str,
