@@ -1,0 +1,209 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "PAYMENT-.{airport_code}.-.YYYY.-.#####",
+ "creation": "2026-04-21 17:54:58.766613",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_rinh",
+  "lease_contract",
+  "amount_due",
+  "column_break_ssgq",
+  "airport_code",
+  "status",
+  "section_break_rvch",
+  "period_start",
+  "period_end",
+  "column_break_utrq",
+  "date_posted",
+  "date_paid",
+  "section_break_dgps",
+  "tenant",
+  "tenant_email",
+  "column_break_zxwu",
+  "address",
+  "section_break_tkqo",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_rinh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Shop Rent Payment",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "lease_contract",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Lease Contract",
+   "options": "Shop Lease Contract",
+   "reqd": 1
+  },
+  {
+   "fieldname": "period_start",
+   "fieldtype": "Date",
+   "label": "Period Start",
+   "reqd": 1
+  },
+  {
+   "fieldname": "period_end",
+   "fieldtype": "Date",
+   "label": "Period End",
+   "reqd": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "section_break_rvch",
+   "fieldtype": "Section Break",
+   "label": "Dates"
+  },
+  {
+   "fieldname": "amount_due",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount Due",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_utrq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "section_break_dgps",
+   "fieldtype": "Section Break",
+   "label": "Tenant Details"
+  },
+  {
+   "fetch_from": "lease_contract.airport_code",
+   "fieldname": "airport_code",
+   "fieldtype": "Data",
+   "label": "Airport Code"
+  },
+  {
+   "fieldname": "date_posted",
+   "fieldtype": "Date",
+   "label": "Date Posted"
+  },
+  {
+   "fetch_from": "lease_contract.tenant",
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "label": "Tenant",
+   "options": "Shop Tenant",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "tenant.email",
+   "fieldname": "tenant_email",
+   "fieldtype": "Data",
+   "label": "Tenant Email",
+   "options": "Email",
+   "read_only": 1
+  },
+  {
+   "default": "Due",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Due\nPaid"
+  },
+  {
+   "fieldname": "date_paid",
+   "fieldtype": "Date",
+   "label": "Date Paid"
+  },
+  {
+   "fieldname": "column_break_ssgq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_zxwu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "tenant.address",
+   "fetch_if_empty": 1,
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_tkqo",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-04-28 09:17:25.255587",
+ "modified_by": "Administrator",
+ "module": "Airport Shops",
+ "name": "Shop Rent Payment",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Airport Authority Personnel",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Shop Tenant",
+   "share": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Red",
+   "title": "Due"
+  },
+  {
+   "color": "Green",
+   "title": "Paid"
+  }
+ ]
+}

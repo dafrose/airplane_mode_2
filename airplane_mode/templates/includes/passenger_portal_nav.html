@@ -1,0 +1,23 @@
+{% set L = passenger_portal_links() %}
+{% set _p = pathname | default('', true) %}
+{% set _path = (_p[1:] if _p.startswith('/') else _p) %}
+{% set home_seg = L.home[1:] %}
+{% set flights_seg = L.flights[1:] %}
+{% set on_tickets = _path == home_seg or _path.startswith(home_seg + '/') %}
+{% set on_flights = _path == flights_seg or _path.startswith(flights_seg + '/') %}
+<header class="passenger-portal-topbar">
+	<nav class="passenger-portal-nav-links" aria-label="{{ _('Passenger navigation') }}">
+		{% if frappe.session.user != 'Guest' %}
+		<div class="passenger-portal-nav-ctas">
+			<a class="btn {{ 'btn-primary' if on_tickets else 'btn-default' }}" href="{{ L.home }}">{{ _("My Tickets") }}</a>
+			<a class="btn {{ 'btn-primary' if on_flights else 'btn-default' }}" href="{{ L.flights }}">{{ _("New booking") }}</a>
+		</div>
+		{% endif %}
+	</nav>
+	<div class="passenger-portal-nav-actions">
+		{% if frappe.session.user == 'Guest' %}
+		<a class="btn btn-default btn-sm" href="{{ L.login }}">{{ _("Log in") }}</a>
+		<a class="btn btn-primary btn-sm" href="{{ L.signup }}">{{ _("Sign up") }}</a>
+		{% endif %}
+	</div>
+</header>

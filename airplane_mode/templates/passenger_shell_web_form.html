@@ -1,0 +1,10 @@
+{% extends "website/doctype/web_form/templates/web_form.html" %}
+
+{% block page_content %}
+<div class="passenger-portal-page passenger-portal-page--webform">
+	{% include "templates/includes/passenger_portal_nav.html" %}
+	<div class="passenger-portal-body passenger-portal-body--webform">
+		{{ super() }}
+	</div>
+</div>
+{% endblock %}

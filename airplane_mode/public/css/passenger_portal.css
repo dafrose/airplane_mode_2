@@ -1,0 +1,204 @@
+/* —— Navbar (Frappe base) + notification bell —— */
+.passenger-navbar-notifications-wrap {
+	position: relative;
+}
+
+.navbar .passenger-notification-toggle {
+	border: none;
+	background: transparent;
+	line-height: 1.2;
+}
+
+.navbar .passenger-notification-icon {
+	font-size: 1.25rem;
+	line-height: 1;
+	vertical-align: middle;
+}
+
+.navbar .passenger-notification-dropdown {
+	z-index: 2000;
+}
+
+.passenger-portal-topbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.75rem 1rem;
+	padding: 0.65rem 0;
+	margin-bottom: 1rem;
+	border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.passenger-portal-brand {
+	font-weight: 700;
+	text-decoration: none;
+	color: inherit;
+}
+
+.passenger-portal-nav-links {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem 1rem;
+	flex: 1;
+}
+
+.passenger-portal-nav-ctas {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.passenger-portal-nav-links a:not(.btn) {
+	text-decoration: none;
+}
+
+.passenger-portal-nav-links a:not(.btn):hover {
+	text-decoration: underline;
+}
+
+.passenger-portal-nav-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.passenger-notification-bell {
+	position: relative;
+}
+
+.passenger-notification-bell.hide {
+	display: none;
+}
+
+.passenger-notification-toggle {
+	position: relative;
+	min-width: 2.25rem;
+}
+
+.passenger-notification-badge {
+	position: absolute;
+	top: -0.35rem;
+	right: -0.35rem;
+	min-width: 1.1rem;
+	height: 1.1rem;
+	padding: 0 0.25rem;
+	border-radius: 999px;
+	background: #c0392b;
+	color: #fff;
+	font-size: 0.65rem;
+	line-height: 1.1rem;
+	text-align: center;
+}
+
+.passenger-notification-badge.hide {
+	display: none;
+}
+
+.passenger-notification-dropdown {
+	position: absolute;
+	right: 0;
+	top: 100%;
+	margin-top: 0.25rem;
+	width: min(22rem, 92vw);
+	max-height: 70vh;
+	overflow: auto;
+	background: var(--card-bg, #fff);
+	border: 1px solid var(--border-color, #e2e8f0);
+	border-radius: 6px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+	z-index: 50;
+}
+
+.passenger-notification-dropdown.hide {
+	display: none;
+}
+
+.passenger-notification-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.5rem 0.75rem;
+	border-bottom: 1px solid var(--border-color, #e2e8f0);
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
+.passenger-notification-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.passenger-notification-item {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	gap: 0;
+	border-bottom: 1px solid var(--border-color, #eee);
+}
+
+.passenger-notification-item.unread {
+	background: rgba(59, 130, 246, 0.06);
+}
+
+.passenger-notification-item a {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: block;
+	padding: 0.6rem 0.75rem;
+	color: inherit;
+	text-decoration: none;
+}
+
+.passenger-notification-item a:hover {
+	background: rgba(0, 0, 0, 0.03);
+}
+
+.passenger-notification-item .meta {
+	font-size: 0.75rem;
+	color: var(--text-muted, #64748b);
+	margin-top: 0.2rem;
+}
+
+.passenger-notification-dismiss {
+	flex: 0 0 auto;
+	align-self: flex-start;
+	margin: 0.45rem 0.25rem 0.45rem 0.5rem;
+	padding: 0 0.35rem;
+	border: none;
+	background: transparent;
+	color: var(--text-muted, #64748b);
+	cursor: pointer;
+	font-size: 1.1rem;
+	line-height: 1;
+}
+
+.passenger-notification-dismiss:hover {
+	color: #c0392b;
+}
+
+.passenger-notification-empty {
+	margin: 0;
+	padding: 0.75rem;
+	font-size: 0.875rem;
+}
+
+.passenger-portal-body--webform .web-form-container {
+	margin-top: 0;
+}
+
+.passenger-home-tickets {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 0.5rem;
+}
+
+.passenger-home-tickets th,
+.passenger-home-tickets td {
+	padding: 0.5rem 0.65rem;
+	border-bottom: 1px solid var(--border-color, #e2e8f0);
+	text-align: left;
+}
+

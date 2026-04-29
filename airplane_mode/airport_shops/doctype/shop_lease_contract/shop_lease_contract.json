@@ -1,0 +1,137 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "SHOPLEASE-.{airport_code}.-.#####",
+ "creation": "2026-04-21 17:39:43.080040",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "shop",
+  "airport_code",
+  "column_break_qblv",
+  "tenant",
+  "section_break_cuni",
+  "lease_expiry_date",
+  "lease_start_date",
+  "column_break_ertv",
+  "rent",
+  "next_due_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "shop",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Shop",
+   "options": "Shop",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Tenant",
+   "options": "Shop Tenant",
+   "reqd": 1
+  },
+  {
+   "description": "monthly payment",
+   "fieldname": "rent",
+   "fieldtype": "Currency",
+   "label": "Rent",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "lease_expiry_date",
+   "fieldtype": "Date",
+   "label": "Lease Expiry Date"
+  },
+  {
+   "fieldname": "column_break_qblv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_cuni",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "lease_start_date",
+   "fieldtype": "Date",
+   "label": "Lease Start Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_ertv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "shop.airport_code",
+   "fieldname": "airport_code",
+   "fieldtype": "Data",
+   "label": "Airport Code",
+   "read_only": 1
+  },
+  {
+   "fieldname": "next_due_date",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "label": "Next Due Date",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "link_doctype": "Shop Rent Payment",
+   "link_fieldname": "lease_contract"
+  }
+ ],
+ "modified": "2026-04-28 10:08:59.528426",
+ "modified_by": "Administrator",
+ "module": "Airport Shops",
+ "name": "Shop Lease Contract",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Airport Authority Personnel",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Shop Tenant",
+   "share": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,33 @@
+{
+ "attach_files": "",
+ "attach_print": 1,
+ "channel": "Email",
+ "creation": "2026-04-28 10:28:06.652234",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Shop Rent Payment",
+ "enabled": 1,
+ "event": "Submit",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "<p>Hello {{ doc.tenant or \"Tenant\" }},</p>\n\n<p>\n  Your rent payment has been received.  \n  Please find your receipt details below.\n</p>\n\n<table cellpadding=\"6\" cellspacing=\"0\" style=\"border-collapse: collapse; width: 100%; max-width: 640px;\">\n  <tr>\n    <td style=\"border: 1px solid #ddd;\"><strong>Payment Reference</strong></td>\n    <td style=\"border: 1px solid #ddd;\">{{ doc.name }}</td>\n  </tr>\n  <tr>\n    <td style=\"border: 1px solid #ddd;\"><strong>Lease Contract</strong></td>\n    <td style=\"border: 1px solid #ddd;\">{{ doc.lease_contract }}</td>\n  </tr>\n  <tr>\n    <td style=\"border: 1px solid #ddd;\"><strong>Airport Code</strong></td>\n    <td style=\"border: 1px solid #ddd;\">{{ doc.airport_code }}</td>\n  </tr>\n  <tr>\n    <td style=\"border: 1px solid #ddd;\"><strong>Amount Paid</strong></td>\n    <td style=\"border: 1px solid #ddd;\">{{ doc.amount_due }}</td>\n  </tr>\n  <tr>\n    <td style=\"border: 1px solid #ddd;\"><strong>Billing Period</strong></td>\n    <td style=\"border: 1px solid #ddd;\">{{ doc.period_start }} to {{ doc.period_end }}</td>\n  </tr>\n  <tr>\n    <td style=\"border: 1px solid #ddd;\"><strong>Status</strong></td>\n    <td style=\"border: 1px solid #ddd;\">{{ doc.status }}</td>\n  </tr>\n  <tr>\n    <td style=\"border: 1px solid #ddd;\"><strong>Date Paid</strong></td>\n    <td style=\"border: 1px solid #ddd;\">{{ doc.date_paid or \"-\" }}</td>\n  </tr>\n</table>\n\n<p style=\"margin-top: 16px;\">\n  Thank you.<br>\n  Airport Shops Team\n</p>",
+ "message_type": "Markdown",
+ "modified": "2026-04-28 10:34:21.679829",
+ "modified_by": "Administrator",
+ "module": "Airport Shops",
+ "name": "Payment Receipt Notification",
+ "owner": "Administrator",
+ "print_format": "Payment Receipt Format",
+ "recipients": [
+  {
+   "condition": "doc.tenant_email",
+   "receiver_by_document_field": "tenant_email"
+  }
+ ],
+ "send_system_notification": 1,
+ "send_to_all_assignees": 0,
+ "sender": "Airport Manager",
+ "sender_email": "airport@manager.com",
+ "subject": "Payment Receipt for {{ doc.name }}"
+}

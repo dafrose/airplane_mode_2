@@ -1,0 +1,14 @@
+<div id="passenger-notification-bell" class="passenger-notification-bell" data-role="passenger-bell" aria-live="polite">
+	<button type="button" class="passenger-notification-toggle btn btn-link nav-link py-0 px-2" aria-expanded="false" aria-haspopup="true" title="{{ _('Notifications') }}">
+		<span class="passenger-notification-icon" aria-hidden="true">&#128276;</span>
+		<span class="passenger-notification-badge hide" data-notification-badge>0</span>
+	</button>
+	<div class="passenger-notification-dropdown hide" data-notification-panel>
+		<div class="passenger-notification-header">
+			<span>{{ _("Notifications") }}</span>
+			<button type="button" class="btn-link passenger-notification-dismiss-all" data-portal-dismiss-all>{{ _("Dismiss all from list") }}</button>
+		</div>
+		<ul class="passenger-notification-list" data-notification-list></ul>
+		<p class="passenger-notification-empty text-muted hide" data-notification-empty>{{ _("No notifications") }}</p>
+	</div>
+</div>

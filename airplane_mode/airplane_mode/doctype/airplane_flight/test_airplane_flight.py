@@ -72,7 +72,12 @@ class TestAirplaneFlight(FrappeTestCase):
 		"""Mirrors production `frappe.enqueue` by invoking the worker synchronously."""
 
 		def dequeue(method, **kwargs):
-			frappe.get_attr(method)(flight_name=kwargs["flight_name"])
+			if "sync_tickets_gate_for_flight" in method:
+				frappe.get_attr(method)(flight_name=kwargs["flight_name"])
+			elif "make_notification_logs" in method:
+				frappe.get_attr(method)(kwargs["doc"], kwargs["users"])
+			else:
+				raise AssertionError(f"unexpected frappe.enqueue target: {method!r}")
 
 		flight = create_test_flight()
 		ticket = create_test_ticket(flight=flight.name)
@@ -130,16 +135,19 @@ class TestAirplaneFlight(FrappeTestCase):
 
 		published = []
 
-		def capture_pub(**kwargs):
-			published.append(kwargs)
+		def capture_pub(*args, **kwargs):
+			if args:
+				published.append(dict(event=args[0], **kwargs))
+			else:
+				published.append(kwargs)
 
 		with patch("frappe.publish_realtime", side_effect=capture_pub):
 			sync_tickets_gate_for_flight(flight.name)
 
-		self.assertEqual(len(published), 1)
-		self.assertEqual(published[0]["event"], GATE_CHANGE_REALTIME_EVENT)
-		self.assertEqual(published[0]["user"], "Administrator")
-		msg = published[0]["message"]
+		gate_events = [p for p in published if p.get("event") == GATE_CHANGE_REALTIME_EVENT]
+		self.assertEqual(len(gate_events), 1)
+		self.assertEqual(gate_events[0]["user"], "Administrator")
+		msg = gate_events[0]["message"]
 		self.assertEqual(msg["ticket"], ticket.name)
 		self.assertEqual(msg["flight"], flight.name)
 		self.assertEqual(msg["old_gate"], "X1")
@@ -147,3 +155,22 @@ class TestAirplaneFlight(FrappeTestCase):
 		self.assertIn("view_ticket_url", msg)
 		self.assertIn(BOOK_FLIGHT_WEB_FORM_ROUTE, msg["view_ticket_url"])
 		self.assertNotIn("/app/Form/", msg["view_ticket_url"])
+
+	def test_sync_job_creates_notification_log_for_passenger(self):
+		flight = create_test_flight(gate_number="N1")
+		passenger = create_test_passenger(user="Administrator")
+		ticket = create_test_ticket(flight=flight.name, passenger=passenger)
+
+		frappe.db.set_value("Airplane Flight", flight.name, "gate_number", "N2", update_modified=False)
+		sync_tickets_gate_for_flight(flight.name)
+
+		self.assertTrue(
+			frappe.db.exists(
+				"Notification Log",
+				{
+					"for_user": "Administrator",
+					"document_type": "Airplane Ticket",
+					"document_name": ticket.name,
+				},
+			)
+		)

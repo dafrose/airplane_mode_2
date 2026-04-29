@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{ page_title or _("Shop") }}</title>
+	<link rel="stylesheet" href="{{ picnic_css }}">
+</head>
+<body>
+	<nav class="shops-portal-nav" style="padding: 1rem 1rem 0.75rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e8e8e8;">
+		<a href="{{ frappe.utils.get_url('/shops') }}">{{ _("All shops") }}</a>
+	</nav>
+	<main class="shops-portal-main" style="max-width: 720px; margin: 2.75rem auto 2rem; padding: 0 1rem 2rem;">
+		<h1 style="margin-top: 0;">{{ shop.name }}</h1>
+		<p>
+			<strong>{{ _("Airport") }}:</strong> {{ shop.airport_code }}
+			<br>
+			<strong>{{ _("Type") }}:</strong> {{ shop.shop_type }}
+			<br>
+			<strong>{{ _("Area") }}:</strong> {{ shop.area }} m²
+			<br>
+			<strong>{{ _("Status") }}:</strong> {{ shop.status }}
+		</p>
+		<p>
+			<a class="button success" href="{{ shop_lead_url }}">{{ _("Request information") }}</a>
+		</p>
+	</main>
+</body>
+</html>

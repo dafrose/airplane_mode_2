@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{ page_title or _("Airport shops") }}</title>
+	<link rel="stylesheet" href="{{ picnic_css }}">
+</head>
+<body>
+	<nav class="shops-portal-nav" style="padding: 1rem 1rem 0.75rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e8e8e8;">
+		<strong>{{ _("Shops") }}</strong>
+	</nav>
+	<main class="shops-portal-main" style="max-width: 960px; margin: 2.75rem auto 2rem; padding: 0 1rem 2rem;">
+		<h1 style="margin-top: 0;">{{ _("Published airport shops") }}</h1>
+		{% if shops %}
+		<table>
+			<thead>
+				<tr>
+					<th>{{ _("Airport") }}</th>
+					<th>{{ _("Shop") }}</th>
+					<th>{{ _("Type") }}</th>
+					<th>{{ _("Area (m²)") }}</th>
+					<th>{{ _("Status") }}</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for s in shops %}
+				<tr>
+					<td>{{ s.airport_code }}</td>
+					<td>{{ s.name }}</td>
+					<td>{{ s.shop_type }}</td>
+					<td>{{ s.area }}</td>
+					<td>{{ s.status }}</td>
+					<td><a class="button" href="{{ s.detail_url }}">{{ _("View") }}</a></td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% else %}
+		<p>{{ _("No shops are published right now.") }}</p>
+		{% endif %}
+	</main>
+</body>
+</html>

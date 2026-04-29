@@ -29,8 +29,11 @@ app_license = "mit"
 # app_include_js = "/assets/airplane_mode/js/airplane_mode.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/airplane_mode/css/airplane_mode.css"
-web_include_js = ["/assets/airplane_mode/js/airplane_gate_alerts.js"]
+web_include_css = ["/assets/airplane_mode/css/passenger_portal.css"]
+web_include_js = [
+	"/assets/airplane_mode/js/airplane_gate_alerts.js",
+	"/assets/airplane_mode/js/passenger_portal_notifications.js",
+]
 
 # include custom scss in every website theme (without file extension ".scss")
 # website_theme_scss = "airplane_mode/public/scss/website"
@@ -74,16 +77,24 @@ web_include_js = ["/assets/airplane_mode/js/airplane_gate_alerts.js"]
 # ----------
 
 # add methods and filters to jinja environment
-# jinja = {
-# 	"methods": "airplane_mode.utils.jinja_methods",
-# 	"filters": "airplane_mode.utils.jinja_filters"
-# }
+jinja = {
+	"methods": [
+		"airplane_mode.passenger_portal_urls.passenger_portal_links",
+	],
+}
 
 # Installation
 # ------------
 
 # before_install = "airplane_mode.install.before_install"
 after_install = "airplane_mode.install.after_install"
+
+# Fixtures (see `bench export-fixtures` — e.g. default **Airport Shop Settings** row)
+# --------
+fixtures = [
+	"Airport Shop Settings",
+	"Shop Type",
+]
 
 # Uninstallation
 # ------------
@@ -148,23 +159,12 @@ has_permission = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"airplane_mode.tasks.all"
-# 	],
-# 	"daily": [
-# 		"airplane_mode.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"airplane_mode.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"airplane_mode.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"airplane_mode.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"daily": [
+		"airplane_mode.airport_shops.tasks.create_due_shop_rent_payments",
+		"airplane_mode.airport_shops.tasks.sync_occupied_shop_status_from_leases",
+	],
+}
 
 # Testing
 # -------

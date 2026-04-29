@@ -1,0 +1,10 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<div class="page passenger-portal-page">
+	{% include "templates/includes/passenger_portal_nav.html" %}
+	<div class="passenger-portal-body">
+		{% block passenger_portal_inner %}{% endblock %}
+	</div>
+</div>
+{% endblock %}

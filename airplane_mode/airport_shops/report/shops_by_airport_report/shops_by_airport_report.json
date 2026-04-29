@@ -1,0 +1,63 @@
+{
+ "add_total_row": 1,
+ "add_translate_data": 0,
+ "columns": [
+  {
+   "fieldname": "airport",
+   "fieldtype": "Data",
+   "label": "Airport",
+   "width": 0
+  },
+  {
+   "fieldname": "airport_code",
+   "fieldtype": "Data",
+   "label": "Airport Code",
+   "width": 0
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Int",
+   "label": "Total",
+   "width": 0
+  },
+  {
+   "fieldname": "occupied",
+   "fieldtype": "Int",
+   "label": "Occupied",
+   "width": 0
+  },
+  {
+   "fieldname": "available",
+   "fieldtype": "Int",
+   "label": "Available",
+   "width": 0
+  }
+ ],
+ "creation": "2026-04-21 18:24:15.808906",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": null,
+ "modified": "2026-04-21 18:30:51.348400",
+ "modified_by": "Administrator",
+ "module": "Airport Shops",
+ "name": "Shops By Airport Report",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT\n\ts.airport AS `airport`,\n\ts.airport_code AS `airport_code`,\n\tCOUNT(*) AS `total`,\n\tSUM(CASE WHEN s.status = 'Occupied' THEN 1 ELSE 0 END) AS `occupied`,\n\tSUM(CASE WHEN s.status = 'Available' THEN 1 ELSE 0 END) AS `available`\nFROM `tabShop` AS s\nGROUP BY s.airport, s.airport_code\nORDER BY `airport_code`, `airport`",
+ "ref_doctype": "Shop",
+ "report_name": "Shops By Airport Report",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Airport Authority Personnel"
+  }
+ ],
+ "timeout": 0
+}

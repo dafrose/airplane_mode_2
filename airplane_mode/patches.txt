@@ -5,3 +5,5 @@
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
 airplane_mode.airplane_mode.doctype.airplane_ticket.populate_seats
+airplane_mode.airport_shops.doctype.shop_lease_contract.backfill_next_due_date
+airplane_mode.patches.add_notification_log_hidden_from_portal

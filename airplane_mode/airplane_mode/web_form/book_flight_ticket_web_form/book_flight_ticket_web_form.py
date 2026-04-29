@@ -10,6 +10,7 @@ from airplane_mode.airplane_mode.doctype.airplane_ticket.airplane_ticket import 
 from airplane_mode.airplane_mode.doctype.flight_passenger.flight_passenger import (
 	get_passenger_for_user,
 )
+from airplane_mode.passenger_portal_urls import apply_passenger_web_form_template
 
 
 def _passenger_display_name(passenger_id: str | None) -> str:
@@ -23,6 +24,7 @@ def _passenger_display_name(passenger_id: str | None) -> str:
 
 
 def get_context(context):
+	apply_passenger_web_form_template(context)
 	# Existing saved response: keep server-loaded document
 	if frappe.form_dict.get("name"):
 		if frappe.db.exists("Airplane Ticket", frappe.form_dict.name):
