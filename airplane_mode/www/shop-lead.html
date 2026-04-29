@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{ page_title or _("Request information") }}</title>
+	<link rel="stylesheet" href="{{ picnic_css }}">
+</head>
+<body>
+	<nav class="shops-portal-nav" style="padding: 1rem 1rem 0.75rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e8e8e8;">
+		<a href="{{ shops_list_url }}">{{ _("All shops") }}</a>
+		<span> · </span>
+		<a href="{{ shop_detail_url }}">{{ _("Back to shop") }}</a>
+	</nav>
+	<main class="shops-portal-main" style="max-width: 40rem; margin: 2.75rem auto 2rem; padding: 0 1rem 2rem;">
+		<h1 style="margin-top: 0;">{{ _("Request information") }}</h1>
+		<p>
+			<strong>{{ _("Shop") }}:</strong> {{ shop.name }}
+			<br>
+			<strong>{{ _("Airport") }}:</strong> {{ shop.airport_code }}
+			<br>
+			<strong>{{ _("Type") }}:</strong> {{ shop.shop_type }}
+		</p>
+
+		<div id="shop-lead-alerts"></div>
+
+		<form id="shop-lead-form" class="stack">
+			<input type="hidden" name="shop" id="field-shop" value="{{ shop.name | e }}">
+
+			<label>{{ _("First name") }} *</label>
+			<input class="stack" type="text" name="first_name" id="field-first_name" required autocomplete="given-name">
+
+			<label>{{ _("Last name") }} *</label>
+			<input class="stack" type="text" name="last_name" id="field-last_name" required autocomplete="family-name">
+
+			<label id="label-email">{{ _("Email") }}</label>
+			<input class="stack" type="email" name="email" id="field-email" autocomplete="email">
+
+			<label id="label-phone">{{ _("Phone") }}</label>
+			<input class="stack" type="tel" name="phone" id="field-phone" autocomplete="tel">
+
+			<p class="pseudo" style="font-size: 0.9rem;">{{ _("Email is required if phone is empty; phone is required if email is empty.") }}</p>
+
+			<label>{{ _("Projected start date") }}</label>
+			<input class="stack" type="date" name="projected_start_date" id="field-projected_start_date">
+
+			<p style="margin-top: 1rem;">
+				<button type="submit" class="button success" id="shop-lead-submit">{{ _("Send request") }}</button>
+			</p>
+		</form>
+
+		<div id="shop-lead-done" class="stack hide">
+			<p class="success">{{ _("Thank you. We received your request.") }}</p>
+			<a class="button" href="{{ shops_list_url }}">{{ _("Back to shop directory") }}</a>
+		</div>
+	</main>
+	<style>
+		.hide { display: none !important; }
+		#shop-lead-alerts .alert { margin: 0.75rem 0; padding: 0.75rem; border-radius: 4px; background: #fde8e8; color: #7f1d1d; }
+	</style>
+	<script>
+		(function () {
+			const CSRF = {{ csrf_token | json }};
+			const METHOD = {{ submit_method | json }};
+			const MSG_CONTACT = {{ _("Please provide an email address or a phone number.") | json }};
+			const MSG_GENERIC = {{ _("Could not save. Please try again.") | json }};
+			const form = document.getElementById("shop-lead-form");
+			const done = document.getElementById("shop-lead-done");
+			const alerts = document.getElementById("shop-lead-alerts");
+			const submitBtn = document.getElementById("shop-lead-submit");
+			const fieldEmail = document.getElementById("field-email");
+			const fieldPhone = document.getElementById("field-phone");
+			const labelEmail = document.getElementById("label-email");
+			const labelPhone = document.getElementById("label-phone");
+			const STAR = " *";
+
+			function syncContactRequired() {
+				const e = fieldEmail.value.trim();
+				const p = fieldPhone.value.trim();
+				fieldEmail.required = !p;
+				fieldPhone.required = !e;
+				labelEmail.textContent = labelEmail.textContent.replace(STAR, "") + (fieldEmail.required ? STAR : "");
+				labelPhone.textContent = labelPhone.textContent.replace(STAR, "") + (fieldPhone.required ? STAR : "");
+			}
+
+			["input", "change"].forEach(function (ev) {
+				fieldEmail.addEventListener(ev, syncContactRequired);
+				fieldPhone.addEventListener(ev, syncContactRequired);
+			});
+			syncContactRequired();
+
+			function showError(msg) {
+				alerts.innerHTML = "<div class='alert'>" + msg + "</div>";
+			}
+
+			form.addEventListener("submit", async function (e) {
+				e.preventDefault();
+				alerts.innerHTML = "";
+				syncContactRequired();
+				const email = fieldEmail.value.trim();
+				const phone = fieldPhone.value.trim();
+				if (!email && !phone) {
+					showError(MSG_CONTACT);
+					return;
+				}
+				submitBtn.disabled = true;
+				const payload = {
+					shop: document.getElementById("field-shop").value,
+					first_name: document.getElementById("field-first_name").value.trim(),
+					last_name: document.getElementById("field-last_name").value.trim(),
+					email: email || null,
+					phone: phone || null,
+					projected_start_date: document.getElementById("field-projected_start_date").value || null,
+				};
+				try {
+					const res = await fetch("/api/method/" + METHOD, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"X-Frappe-CSRF-Token": CSRF,
+							"Accept": "application/json",
+						},
+						body: JSON.stringify(payload),
+					});
+					const data = await res.json();
+					if (res.ok && data.message && data.message.name) {
+						form.classList.add("hide");
+						done.classList.remove("hide");
+						return;
+					}
+					let err = MSG_GENERIC;
+					if (data.exception) {
+						err = String(data.exception).split(":").pop().trim() || MSG_GENERIC;
+					} else if (typeof data.message === "string") {
+						err = data.message;
+					}
+					showError(err);
+				} catch (err) {
+					showError(MSG_GENERIC);
+				}
+				submitBtn.disabled = false;
+			});
+		})();
+	</script>
+</body>
+</html>

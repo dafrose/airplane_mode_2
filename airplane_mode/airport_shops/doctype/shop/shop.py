@@ -2,10 +2,10 @@
 # For license information, please see license.txt
 
 # import frappe
-from frappe.website.website_generator import WebsiteGenerator
+from frappe.model.document import Document
 
 
-class Shop(WebsiteGenerator):
+class Shop(Document):
 	# begin: auto-generated types
 	# This code is auto-generated. Do not modify anything in this block.
 
