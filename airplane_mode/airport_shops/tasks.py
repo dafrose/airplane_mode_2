@@ -12,6 +12,43 @@ from dateutil.relativedelta import relativedelta
 from frappe.utils import getdate, today
 
 
+def sync_occupied_shop_status_from_leases() -> None:
+	"""Set **Shop** *Status* to **Available** when every linked **Shop Lease Contract** is expired.
+
+	Open-ended leases (`lease_expiry_date` empty) stay active. Only **Occupied** shops are scanned.
+	Desk `validate` on the lease already updates the shop on save; this job catches calendar rollovers.
+	"""
+	today_d = getdate(today())
+	for shop_name in frappe.get_all("Shop", filters={"status": "Occupied"}, pluck="name"):
+		has_active_lease = frappe.db.sql(
+			"""
+			select 1
+			from `tabShop Lease Contract`
+			where shop = %s
+				and (
+					`lease_expiry_date` is null
+					or `lease_expiry_date` > %s
+				)
+			limit 1
+			""",
+			(shop_name, today_d),
+		)
+		if has_active_lease:
+			continue
+		frappe.db.set_value("Shop", shop_name, "status", "Available", update_modified=False)
+
+
+@frappe.whitelist()
+def enqueue_sync_occupied_shop_status_from_leases() -> None:
+	"""Queue manual run of occupied-shop status sync (Desk / **bench execute**)."""
+	frappe.only_for(("System Manager", "Airport Authority Personnel"))
+	frappe.enqueue(
+		"airplane_mode.airport_shops.tasks.sync_occupied_shop_status_from_leases",
+		queue="default",
+		job_name="airplane_mode.sync_occupied_shop_status_from_leases.manual",
+	)
+
+
 @frappe.whitelist()
 def enqueue_create_due_shop_rent_payments() -> None:
 	"""Queue manual run of due-payment creation from Desk list view."""

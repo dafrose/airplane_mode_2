@@ -162,6 +162,7 @@ has_permission = {
 scheduler_events = {
 	"daily": [
 		"airplane_mode.airport_shops.tasks.create_due_shop_rent_payments",
+		"airplane_mode.airport_shops.tasks.sync_occupied_shop_status_from_leases",
 	],
 }
 
