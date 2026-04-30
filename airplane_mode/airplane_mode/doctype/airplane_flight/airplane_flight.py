@@ -3,7 +3,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import get_url, now_datetime
+from frappe.utils import get_url
 from frappe.utils.data import quoted
 from frappe.website.website_generator import WebsiteGenerator
 
@@ -13,7 +13,6 @@ BOOK_FLIGHT_WEB_FORM_ROUTE = "book-flight-ticket-web-form"
 FLIGHTS_WEB_ROUTE = "flights"
 
 GATE_CHANGE_REALTIME_EVENT = "airplane_ticket_gate_change"
-_GATE_BEFORE_SAVE_MISSING = object()
 
 
 def get_airplane_ticket_portal_url(ticket_name: str) -> str:
@@ -22,18 +21,14 @@ def get_airplane_ticket_portal_url(ticket_name: str) -> str:
 
 
 def sync_tickets_gate_for_flight(flight_name: str) -> None:
-	"""Align **Airplane Ticket** *gate_number* with the flight; stamp *gate_number_changed_on*
-	when a ticket value changes; notify the passenger *User* over realtime.
+	"""Align **Airplane Ticket** *gate_number* with the flight.
+
+	Updates use ``Document.save`` (not ``db.set_value``) so Frappe runs document hooks and
+	Desk **Notification** rows (e.g. *Value Change* on *gate_number*). Realtime still notifies
+	the linked passenger *User*.
 	"""
-	# Do not check, if flight does not exist.
-	# We do not want to fail silently.
 
 	flight_gate = frappe.db.get_value("Airplane Flight", flight_name, "gate_number")
-
-	def norm(g) -> str:
-		return (g or "").strip()
-
-	target = norm(flight_gate)
 
 	tickets = frappe.get_all(
 		"Airplane Ticket",
@@ -45,23 +40,15 @@ def sync_tickets_gate_for_flight(flight_name: str) -> None:
 	)
 
 	for row in tickets:
-		if norm(row.gate_number) == target:
+		if row.gate_number == flight_gate:
 			continue
 
 		old_gate = row.gate_number
-
-		frappe.db.set_value(
-			"Airplane Ticket",
-			row.name,
-			{
-				"gate_number": flight_gate,
-				"gate_number_changed_on": now_datetime(),
-			},
-			update_modified=False,
-		)
+		doc = frappe.get_doc("Airplane Ticket", row.name)
+		doc.gate_number = flight_gate
+		doc.save(ignore_permissions=True)
 
 		user = frappe.db.get_value("Flight Passenger", row.passenger, "user")
-		# assume user exists. We do not want to fail silently.
 
 		frappe.publish_realtime(
 			event=GATE_CHANGE_REALTIME_EVENT,
@@ -74,24 +61,6 @@ def sync_tickets_gate_for_flight(flight_name: str) -> None:
 			},
 			user=user,
 		)
-
-		user_email = frappe.db.get_value("User", user, "email")
-		if user_email:
-			from frappe.desk.doctype.notification_log.notification_log import (
-				enqueue_create_notification,
-			)
-
-			enqueue_create_notification(
-				[user_email],
-				{
-					"type": "Alert",
-					"document_type": "Airplane Ticket",
-					"document_name": row.name,
-					"subject": _("Boarding gate changed for ticket {0}").format(row.name),
-					"from_user": "Administrator",
-					"link": get_airplane_ticket_portal_url(row.name),
-				},
-			)
 
 
 class AirplaneFlight(WebsiteGenerator):
@@ -137,14 +106,11 @@ class AirplaneFlight(WebsiteGenerator):
 			self._gate_number_before_save = frappe.db.get_value("Airplane Flight", self.name, "gate_number")
 
 	def on_update(self):
-		prev = getattr(self, "_gate_number_before_save", _GATE_BEFORE_SAVE_MISSING)
-		if prev is _GATE_BEFORE_SAVE_MISSING:
-			return
-		before = prev or ""
-		after = self.gate_number or ""
-		if before == after:
-			return
+		# compare previous gate to new gate
+		if self._gate_number_before_save == self.gate_number:
+			return  # no change, no need to sync tickets
 
+		# sync ticket gate numbers via background job
 		frappe.enqueue(
 			"airplane_mode.airplane_mode.doctype.airplane_flight.airplane_flight.sync_tickets_gate_for_flight",
 			queue="default",
