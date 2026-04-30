@@ -99,18 +99,14 @@ class AirplaneFlight(WebsiteGenerator):
 		context.no_breadcrumbs = True
 		return context
 
-	def before_save(self):
-		if self.is_new():
-			self._gate_number_before_save = None
-		else:
-			self._gate_number_before_save = frappe.db.get_value("Airplane Flight", self.name, "gate_number")
-
 	def on_update(self):
-		# compare previous gate to new gate
-		if self._gate_number_before_save == self.gate_number:
-			return  # no change, no need to sync tickets
+		# On insert, ``is_new()`` is True and ``has_value_changed`` is always True;
+		# only enqueue when a gate was set on first save.
+		if self.is_new() and not self.gate_number:
+			return
+		elif not self.has_value_changed("gate_number"):
+			return
 
-		# sync ticket gate numbers via background job
 		frappe.enqueue(
 			"airplane_mode.airplane_mode.doctype.airplane_flight.airplane_flight.sync_tickets_gate_for_flight",
 			queue="default",
