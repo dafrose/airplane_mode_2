@@ -18,8 +18,6 @@ from airplane_mode.tests.helpers import (
 	create_test_ticket,
 )
 
-test_dependencies = ["Airplane"]
-
 
 class TestAirplaneFlight(FrappeTestCase):
 	def test_on_submit_sets_status_to_completed(self):

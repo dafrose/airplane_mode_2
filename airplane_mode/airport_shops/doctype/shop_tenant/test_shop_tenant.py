@@ -4,8 +4,14 @@
 import frappe
 from frappe.tests.utils import FrappeTestCase
 
-TENANT_A = "shop_tenant_a@airplane.test"
-TENANT_B = "shop_tenant_b@airplane.test"
+from airplane_mode.tests.helpers import (
+	SHOP_TENANT_A,
+	SHOP_TENANT_B,
+	ensure_standard_test_users,
+)
+
+TENANT_A = SHOP_TENANT_A
+TENANT_B = SHOP_TENANT_B
 
 
 def _new_tenant(**kwargs):
@@ -20,6 +26,11 @@ def _new_tenant(**kwargs):
 
 
 class TestShopTenantUserSync(FrappeTestCase):
+	@classmethod
+	def setUpClass(cls):
+		super().setUpClass()
+		ensure_standard_test_users()
+
 	def tearDown(self):
 		for name in frappe.get_all("Shop Tenant", filters={"last_name": "SyncTest"}, pluck="name"):
 			frappe.delete_doc("Shop Tenant", name, force=True, ignore_permissions=True)

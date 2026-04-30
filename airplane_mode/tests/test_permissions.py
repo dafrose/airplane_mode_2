@@ -1,22 +1,23 @@
 # Copyright (c) 2026, ALYF and Contributors
 # See license.txt
 
-"""Verify the Day-3 rule that Travel Agents only see records they own.
-
-The two test users (`travel_agent_a@airplane.test`, `travel_agent_b@airplane.test`)
-are guaranteed to exist by `airplane_mode.install.before_tests`, wired in
-hooks.py.
-"""
+"""Verify the Day-3 rule that Travel Agents only see records they own."""
 
 import contextlib
 
 import frappe
 from frappe.tests.utils import FrappeTestCase
 
-from airplane_mode.tests.helpers import create_test_flight, create_test_passenger
+from airplane_mode.tests.helpers import (
+	TRAVEL_AGENT_A,
+	TRAVEL_AGENT_B,
+	create_test_flight,
+	create_test_passenger,
+	ensure_standard_test_users,
+)
 
-AGENT_A = "travel_agent_a@airplane.test"
-AGENT_B = "travel_agent_b@airplane.test"
+AGENT_A = TRAVEL_AGENT_A
+AGENT_B = TRAVEL_AGENT_B
 
 
 @contextlib.contextmanager
@@ -31,6 +32,11 @@ def as_user(user: str):
 
 class TestTravelAgentOwnerOnlyPermissions(FrappeTestCase):
 	"""Each test gets its own flight (capacity = 2 on the seeded airplane)."""
+
+	@classmethod
+	def setUpClass(cls):
+		super().setUpClass()
+		ensure_standard_test_users()
 
 	def setUp(self):
 		self.flight = create_test_flight()
