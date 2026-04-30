@@ -10,6 +10,7 @@
   "airport_code",
   "column_break_qblv",
   "tenant",
+  "public_shop_name",
   "section_break_cuni",
   "lease_expiry_date",
   "lease_start_date",
@@ -78,6 +79,11 @@
    "hidden": 1,
    "label": "Next Due Date",
    "read_only": 1
+  },
+  {
+   "fieldname": "public_shop_name",
+   "fieldtype": "Data",
+   "label": "Public Shop Name"
   }
  ],
  "grid_page_length": 50,
@@ -88,7 +94,7 @@
    "link_fieldname": "lease_contract"
   }
  ],
- "modified": "2026-04-28 10:08:59.528426",
+ "modified": "2026-04-29 16:27:53.198647",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Shop Lease Contract",

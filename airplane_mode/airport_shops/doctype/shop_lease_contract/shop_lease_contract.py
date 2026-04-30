@@ -19,6 +19,7 @@ class ShopLeaseContract(Document):
 		lease_expiry_date: DF.Date | None
 		lease_start_date: DF.Date
 		next_due_date: DF.Date | None
+		public_shop_name: DF.Data | None
 		rent: DF.Currency
 		shop: DF.Link
 		tenant: DF.Link
