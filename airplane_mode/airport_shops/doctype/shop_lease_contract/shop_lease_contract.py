@@ -3,7 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
-from frappe.utils import getdate, today
+from frappe.utils import flt, getdate, today
 
 
 class ShopLeaseContract(Document):
@@ -25,6 +25,9 @@ class ShopLeaseContract(Document):
 		tenant: DF.Link
 	# end: auto-generated types
 
+	def before_insert(self):
+		self._apply_default_rent_if_missing()
+
 	def before_save(self):
 		if self.has_value_changed("lease_start_date"):
 			self.next_due_date = self.lease_start_date
@@ -38,6 +41,13 @@ class ShopLeaseContract(Document):
 
 	def on_trash(self):
 		recalculate_shop_status_from_leases(self.shop, ignore_contract=self.name)
+
+	def _apply_default_rent_if_missing(self) -> None:
+		if flt(self.rent) > 0:
+			return
+		default = frappe.db.get_single_value("Airport Shop Settings", "default_rent_amount")
+		if default is not None:
+			self.rent = default
 
 	def _sync_shop_status_for_lease_dates(self) -> None:
 		if _lease_row_covers_today(self):

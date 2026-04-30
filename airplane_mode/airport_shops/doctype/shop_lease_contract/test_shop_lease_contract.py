@@ -3,7 +3,7 @@
 
 import frappe
 from frappe.tests.utils import FrappeTestCase
-from frappe.utils import add_days, today
+from frappe.utils import add_days, flt, today
 
 from airplane_mode.tests.helpers import get_shop_type_for_tests
 
@@ -20,6 +20,111 @@ def _new_shop_dict(airport: str, **fields):
 
 
 class TestShopLeaseContract(FrappeTestCase):
+	def test_before_insert_applies_default_rent_when_missing(self):
+		frappe.set_user("Administrator")
+		sfx = frappe.generate_hash(length=8)
+		code = f"D{sfx}"[:8]
+		ap = frappe.get_doc(
+			{
+				"doctype": "Airport",
+				"name": f"_LeaseDef-{sfx}",
+				"code": code,
+				"city": "C",
+				"country": "D",
+			}
+		).insert(ignore_permissions=True)
+		shop = frappe.get_doc(_new_shop_dict(ap.name)).insert(ignore_permissions=True)
+		tenant = frappe.get_doc(
+			{
+				"doctype": "Shop Tenant",
+				"first_name": "D",
+				"last_name": f"Def{sfx}",
+				"email": f"lease_def_{sfx}@example.com",
+			}
+		).insert(ignore_permissions=True)
+		lease = None
+		prev_default = frappe.db.get_single_value("Airport Shop Settings", "default_rent_amount")
+		try:
+			frappe.db.set_single_value("Airport Shop Settings", "default_rent_amount", 3125.0)
+			lease = frappe.get_doc(
+				{
+					"doctype": "Shop Lease Contract",
+					"shop": shop.name,
+					"tenant": tenant.name,
+					"lease_start_date": "2026-03-01",
+				}
+			).insert(ignore_permissions=True)
+			self.assertEqual(flt(lease.rent), 3125.0)
+		finally:
+			frappe.db.set_single_value("Airport Shop Settings", "default_rent_amount", prev_default)
+			if lease and frappe.db.exists("Shop Lease Contract", lease.name):
+				frappe.delete_doc(
+					"Shop Lease Contract",
+					lease.name,
+					force=True,
+					ignore_permissions=True,
+				)
+			for dt, nm in (
+				("Shop", shop.name),
+				("Shop Tenant", tenant.name),
+				("Airport", ap.name),
+			):
+				if frappe.db.exists(dt, nm):
+					frappe.delete_doc(dt, nm, force=True, ignore_permissions=True)
+
+	def test_before_insert_keeps_explicit_rent(self):
+		frappe.set_user("Administrator")
+		sfx = frappe.generate_hash(length=8)
+		code = f"R{sfx}"[:8]
+		ap = frappe.get_doc(
+			{
+				"doctype": "Airport",
+				"name": f"_LeaseRent-{sfx}",
+				"code": code,
+				"city": "C",
+				"country": "D",
+			}
+		).insert(ignore_permissions=True)
+		shop = frappe.get_doc(_new_shop_dict(ap.name)).insert(ignore_permissions=True)
+		tenant = frappe.get_doc(
+			{
+				"doctype": "Shop Tenant",
+				"first_name": "R",
+				"last_name": f"Rt{sfx}",
+				"email": f"lease_rt_{sfx}@example.com",
+			}
+		).insert(ignore_permissions=True)
+		lease = None
+		prev_default = frappe.db.get_single_value("Airport Shop Settings", "default_rent_amount")
+		try:
+			frappe.db.set_single_value("Airport Shop Settings", "default_rent_amount", 99999.0)
+			lease = frappe.get_doc(
+				{
+					"doctype": "Shop Lease Contract",
+					"shop": shop.name,
+					"tenant": tenant.name,
+					"rent": 77.5,
+					"lease_start_date": "2026-03-01",
+				}
+			).insert(ignore_permissions=True)
+			self.assertEqual(flt(lease.rent), 77.5)
+		finally:
+			frappe.db.set_single_value("Airport Shop Settings", "default_rent_amount", prev_default)
+			if lease and frappe.db.exists("Shop Lease Contract", lease.name):
+				frappe.delete_doc(
+					"Shop Lease Contract",
+					lease.name,
+					force=True,
+					ignore_permissions=True,
+				)
+			for dt, nm in (
+				("Shop", shop.name),
+				("Shop Tenant", tenant.name),
+				("Airport", ap.name),
+			):
+				if frappe.db.exists(dt, nm):
+					frappe.delete_doc(dt, nm, force=True, ignore_permissions=True)
+
 	def test_before_insert_seeds_next_due_date_from_lease_start(self):
 		frappe.set_user("Administrator")
 		sfx = frappe.generate_hash(length=8)
