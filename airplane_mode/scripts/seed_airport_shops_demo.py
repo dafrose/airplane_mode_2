@@ -26,14 +26,13 @@ from airplane_mode.airport_shops.doctype.shop_lease_contract.shop_lease_contract
 # **Airport** `.name` values from ``seed_space_airline_demo`` (IATA-style codes).
 DEMO_AIRPORT_CODES = ("VNS", "CLP", "PHB")
 
-MARKER_SHOP_TYPE = "Spaceways Demo Concourse"
-SHOP_TYPES: tuple[tuple[str, int], ...] = (
-	(MARKER_SHOP_TYPE, 1),
-	("Spaceways Demo Galley", 1),
-	("Spaceways Demo Services", 1),
-)
+# Fixture **Shop Type** names (see ``fixtures/shop_type.json``); index maps into ``_SHOP_SPECS``.
+DEFAULT_SHOP_TYPES: tuple[str, ...] = ("Normal", "Stall", "Walk-through")
 
-# Per airport: three shops (area m², floors, index into SHOP_TYPES).
+# First demo **Shop Tenant** email — used only to detect an existing seed run.
+_DEMO_SEED_MARKER_EMAIL = "selene.karman@example.com"
+
+# Per airport: three shops (area m², floors, index into DEFAULT_SHOP_TYPES).
 _SHOP_SPECS = (28.0, 1, 0), (52.5, 2, 1), (120.0, 1, 2)
 
 # Lease bundle: (shop_index, tenant_index, rent, lease_start, lease_expiry_or_none, public_shop_name_or_none)
@@ -66,20 +65,20 @@ def seed() -> None:
 			)
 			return
 
-	if frappe.db.exists("Shop", {"shop_type": MARKER_SHOP_TYPE}):
+	if frappe.db.exists("Shop Tenant", {"email": _DEMO_SEED_MARKER_EMAIL}):
 		frappe.msgprint(
-			_("Airport shops demo already present (shops with type {0}).").format(MARKER_SHOP_TYPE),
+			_("Airport shops demo already present (tenant {0}).").format(_DEMO_SEED_MARKER_EMAIL),
 			indicator="orange",
 		)
 		return
 
-	type_names: list[str] = []
-	for type_name, enabled in SHOP_TYPES:
+	for type_name in DEFAULT_SHOP_TYPES:
 		if not frappe.db.exists("Shop Type", type_name):
-			frappe.get_doc(
-				{"doctype": "Shop Type", "name": type_name, "enabled": enabled},
-			).insert(ignore_permissions=True)
-		type_names.append(type_name)
+			frappe.msgprint(
+				_("Shop Type {0} is missing; run migrate or import Shop Type fixtures.").format(type_name),
+				indicator="red",
+			)
+			return
 
 	shop_names: list[str] = []
 	for airport_code in DEMO_AIRPORT_CODES:
@@ -90,7 +89,7 @@ def seed() -> None:
 					"airport": airport_code,
 					"area": area,
 					"floors": floors,
-					"shop_type": type_names[type_idx],
+					"shop_type": DEFAULT_SHOP_TYPES[type_idx],
 					"is_published": 1,
 				}
 			)
@@ -137,8 +136,11 @@ def seed() -> None:
 	for shop in shop_names:
 		recalculate_shop_status_from_leases(shop)
 
+	# **Shop Rent Payment** `after_insert` sends the rent reminder only when *Enable Rent Reminders*
+	# is on. Submit fires the standard **Notification** (e.g. *Payment Receipt Notification*).
 	prev_reminders = frappe.db.get_single_value("Airport Shop Settings", "enable_rent_reminders")
-	frappe.db.set_single_value("Airport Shop Settings", "enable_rent_reminders", 0)
+	frappe.db.set_single_value("Airport Shop Settings", "enable_rent_reminders", 1)
+	frappe.cache.hdel("notifications", "Shop Rent Payment")
 
 	primary_lease = lease_names[0]
 	lease_doc = frappe.get_doc("Shop Lease Contract", primary_lease)
@@ -177,6 +179,7 @@ def seed() -> None:
 		frappe.get_doc("Shop Rent Payment", pay_a.name).submit()
 
 	frappe.db.set_single_value("Airport Shop Settings", "enable_rent_reminders", prev_reminders)
+	frappe.cache.hdel("notifications", "Shop Rent Payment")
 
 	lead_count = 0
 	for shop_i, first, last, email, projected, status in _LEADS:
@@ -196,8 +199,8 @@ def seed() -> None:
 	frappe.db.commit()
 	frappe.msgprint(
 		_(
-			"Created {0} shop types, {1} shops, {2} tenants, {3} leases, rent payments on the primary lease, "
-			"and {4} shop leads for demo airports."
-		).format(len(SHOP_TYPES), len(shop_names), len(tenant_names), len(_LEASES), lead_count),
+			"Created {0} shops (types Normal, Stall, Walk-through), {1} tenants, {2} leases, "
+			"rent payments on the primary lease, and {3} shop leads for demo airports."
+		).format(len(shop_names), len(tenant_names), len(_LEASES), lead_count),
 		indicator="green",
 	)
