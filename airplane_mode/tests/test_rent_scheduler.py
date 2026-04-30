@@ -11,6 +11,9 @@ from dateutil.relativedelta import relativedelta
 from frappe.tests.utils import FrappeTestCase
 from frappe.utils import add_months, getdate, today
 
+from airplane_mode.airport_shops.doctype.shop_rent_payment.shop_rent_payment import (
+	RENT_PAYMENT_REMINDER_NOTIFICATION,
+)
 from airplane_mode.airport_shops.tasks import create_due_shop_rent_payments
 from airplane_mode.tests.helpers import get_shop_type_for_tests
 
@@ -24,9 +27,6 @@ test_dependencies = [
 	"Airport Shop Settings",
 	"Notification",
 ]
-
-# Standard app **Notification** (exported JSON under `airport_shops/notification/`).
-RENT_PAYMENT_REMINDER_NOTIFICATION = "Rent Payment Reminder Email"
 
 
 def _lease_start_default() -> date:
@@ -195,8 +195,19 @@ class TestRentScheduler(FrappeTestCase):
 				"(app export) to run this test."
 			)
 
-		prev_enabled = frappe.db.get_value("Notification", RENT_PAYMENT_REMINDER_NOTIFICATION, "enabled")
-		frappe.db.set_value("Notification", RENT_PAYMENT_REMINDER_NOTIFICATION, "enabled", 1)
+		prev = frappe.db.get_value(
+			"Notification",
+			RENT_PAYMENT_REMINDER_NOTIFICATION,
+			["enabled", "event", "condition"],
+			as_dict=True,
+		)
+		frappe.db.set_value(
+			"Notification",
+			RENT_PAYMENT_REMINDER_NOTIFICATION,
+			{"enabled": 1, "event": "Custom", "condition": None},
+			update_modified=False,
+		)
+		frappe.cache.hdel("notifications", "Shop Rent Payment")
 		frappe.db.set_single_value("Airport Shop Settings", "enable_rent_reminders", 1)
 
 		sfx = frappe.generate_hash(length=8)
@@ -222,13 +233,73 @@ class TestRentScheduler(FrappeTestCase):
 			comms = _automated_message_for_payment(pay.name)
 			self.assertTrue(
 				comms,
-				"Desk **Notification** (New → email) should create an **Automated Message** "
-				"**Communication** linked to the **Shop Rent Payment** (see `Notification.send_an_email`).",
+				"**Custom** rent reminder **Notification** should create an **Automated Message** "
+				"**Communication** when sent from **Shop Rent Payment** `after_insert`.",
 			)
 		finally:
 			frappe.db.set_value(
 				"Notification",
 				RENT_PAYMENT_REMINDER_NOTIFICATION,
-				"enabled",
-				prev_enabled,
+				{
+					"enabled": prev.enabled,
+					"event": prev.event,
+					"condition": prev.condition,
+				},
+				update_modified=False,
 			)
+			frappe.cache.hdel("notifications", "Shop Rent Payment")
+
+	def test_rent_reminder_skipped_when_reminders_disabled(self):
+		if not frappe.db.exists("Notification", RENT_PAYMENT_REMINDER_NOTIFICATION):
+			self.skipTest(
+				f"Install/sync **Notification** `{RENT_PAYMENT_REMINDER_NOTIFICATION}` "
+				"(app export) to run this test."
+			)
+
+		prev = frappe.db.get_value(
+			"Notification",
+			RENT_PAYMENT_REMINDER_NOTIFICATION,
+			["enabled", "event", "condition"],
+			as_dict=True,
+		)
+		frappe.db.set_value(
+			"Notification",
+			RENT_PAYMENT_REMINDER_NOTIFICATION,
+			{"enabled": 1, "event": "Custom", "condition": None},
+			update_modified=False,
+		)
+		frappe.cache.hdel("notifications", "Shop Rent Payment")
+		frappe.db.set_single_value("Airport Shop Settings", "enable_rent_reminders", 0)
+
+		sfx = frappe.generate_hash(length=8)
+		self._bundle = _make_lease_bundle(suffix=sfx)
+		try:
+			lease_start = getdate(
+				frappe.db.get_value("Shop Lease Contract", self._bundle["lease"], "lease_start_date")
+			)
+			period_start = lease_start + relativedelta(months=6)
+			period_end = _period_end(period_start)
+
+			pay = frappe.get_doc(
+				{
+					"doctype": "Shop Rent Payment",
+					"lease_contract": self._bundle["lease"],
+					"amount_due": 100.0,
+					"period_start": period_start,
+					"period_end": period_end,
+				}
+			).insert(ignore_permissions=True)
+
+			self.assertFalse(_automated_message_for_payment(pay.name))
+		finally:
+			frappe.db.set_value(
+				"Notification",
+				RENT_PAYMENT_REMINDER_NOTIFICATION,
+				{
+					"enabled": prev.enabled,
+					"event": prev.event,
+					"condition": prev.condition,
+				},
+				update_modified=False,
+			)
+			frappe.cache.hdel("notifications", "Shop Rent Payment")

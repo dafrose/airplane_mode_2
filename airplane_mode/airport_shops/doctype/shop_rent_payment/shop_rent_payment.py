@@ -11,6 +11,9 @@ from frappe.utils.file_manager import save_file
 # Keep aligned with the **Print Format** chosen on the Desk **Notification** (Submit, attach print).
 PAYMENT_RECEIPT_PRINT_FORMAT = "Payment Receipt Format"
 
+# Desk **Notification** (event **Custom**) — sent from `after_insert` when *Enable Rent Reminders* is on.
+RENT_PAYMENT_REMINDER_NOTIFICATION = "Rent Payment Reminder Email"
+
 
 class ShopRentPayment(Document):
 	# begin: auto-generated types
@@ -44,6 +47,17 @@ class ShopRentPayment(Document):
 				"next_due_date",
 				following,
 			)
+		self._send_rent_payment_reminder_if_enabled()
+
+	def _send_rent_payment_reminder_if_enabled(self) -> None:
+		if not frappe.db.get_single_value("Airport Shop Settings", "enable_rent_reminders"):
+			return
+		if not frappe.db.exists("Notification", RENT_PAYMENT_REMINDER_NOTIFICATION):
+			return
+		alert = frappe.get_doc("Notification", RENT_PAYMENT_REMINDER_NOTIFICATION)
+		if not alert.enabled or alert.document_type != self.doctype or alert.event != "Custom":
+			return
+		alert.send(self)
 
 	def before_submit(self):
 		self.status = "Paid"
