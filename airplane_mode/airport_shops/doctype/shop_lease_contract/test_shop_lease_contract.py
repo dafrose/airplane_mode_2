@@ -184,7 +184,7 @@ class TestShopLeaseContract(FrappeTestCase):
 				if frappe.db.exists(dt, nm):
 					frappe.delete_doc(dt, nm, force=True, ignore_permissions=True)
 
-	def test_validate_sets_occupied_when_expiry_moves_from_past_to_future(self):
+	def test_on_update_sets_occupied_when_expiry_moves_from_past_to_future(self):
 		frappe.set_user("Administrator")
 		sfx = frappe.generate_hash(length=8)
 		code = f"M{sfx}"[:8]
@@ -222,6 +222,59 @@ class TestShopLeaseContract(FrappeTestCase):
 			lease.lease_expiry_date = add_days(today(), 30)
 			lease.save(ignore_permissions=True)
 			self.assertEqual(frappe.db.get_value("Shop", shop.name, "status"), "Occupied")
+		finally:
+			if lease and frappe.db.exists("Shop Lease Contract", lease.name):
+				frappe.delete_doc(
+					"Shop Lease Contract",
+					lease.name,
+					force=True,
+					ignore_permissions=True,
+				)
+			for dt, nm in (
+				("Shop", shop.name),
+				("Shop Tenant", tenant.name),
+				("Airport", ap.name),
+			):
+				if frappe.db.exists(dt, nm):
+					frappe.delete_doc(dt, nm, force=True, ignore_permissions=True)
+
+	def test_before_save_resets_next_due_date_when_lease_start_changes(self):
+		frappe.set_user("Administrator")
+		sfx = frappe.generate_hash(length=8)
+		code = f"N{sfx}"[:8]
+		ap = frappe.get_doc(
+			{
+				"doctype": "Airport",
+				"name": f"_LeaseNd-{sfx}",
+				"code": code,
+				"city": "C",
+				"country": "D",
+			}
+		).insert(ignore_permissions=True)
+		shop = frappe.get_doc(_new_shop_dict(ap.name)).insert(ignore_permissions=True)
+		tenant = frappe.get_doc(
+			{
+				"doctype": "Shop Tenant",
+				"first_name": "N",
+				"last_name": f"Nd{sfx}",
+				"email": f"lease_nd_{sfx}@example.com",
+			}
+		).insert(ignore_permissions=True)
+		lease = None
+		try:
+			lease = frappe.get_doc(
+				{
+					"doctype": "Shop Lease Contract",
+					"shop": shop.name,
+					"tenant": tenant.name,
+					"rent": 50.0,
+					"lease_start_date": "2026-03-01",
+				}
+			).insert(ignore_permissions=True)
+			lease.next_due_date = "2026-04-01"
+			lease.lease_start_date = "2026-03-15"
+			lease.save(ignore_permissions=True)
+			self.assertEqual(str(lease.next_due_date), "2026-03-15")
 		finally:
 			if lease and frappe.db.exists("Shop Lease Contract", lease.name):
 				frappe.delete_doc(

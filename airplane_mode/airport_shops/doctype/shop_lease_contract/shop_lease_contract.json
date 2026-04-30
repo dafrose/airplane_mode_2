@@ -60,6 +60,7 @@
    "fieldname": "lease_start_date",
    "fieldtype": "Date",
    "label": "Lease Start Date",
+   "read_only_depends_on": "eval: doc.lease_start_date && frappe.datetime.get_today() > doc.lease_start_date",
    "reqd": 1
   },
   {
@@ -94,7 +95,7 @@
    "link_fieldname": "lease_contract"
   }
  ],
- "modified": "2026-04-29 16:27:53.198647",
+ "modified": "2026-04-30 11:44:43.299847",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Shop Lease Contract",
