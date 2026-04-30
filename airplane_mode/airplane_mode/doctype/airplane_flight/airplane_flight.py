@@ -100,19 +100,17 @@ class AirplaneFlight(WebsiteGenerator):
 		return context
 
 	def on_update(self):
-		# On insert, ``is_new()`` is True and ``has_value_changed`` is always True;
-		# only enqueue when a gate was set on first save.
-		if self.is_new() and not self.gate_number:
-			return
-		elif not self.has_value_changed("gate_number"):
-			return
-
-		frappe.enqueue(
-			"airplane_mode.airplane_mode.doctype.airplane_flight.airplane_flight.sync_tickets_gate_for_flight",
-			queue="default",
-			job_name=f"flight_gate_sync|{self.name}",
-			flight_name=self.name,
-		)
+		if self.has_value_changed("gate_number"):
+			# On insert, ``is_new()`` is True and ``has_value_changed`` is always True;
+			# only enqueue when a gate was set on first save.
+			if self.is_new() and not self.gate_number:
+				return
+			frappe.enqueue(
+				"airplane_mode.airplane_mode.doctype.airplane_flight.airplane_flight.sync_tickets_gate_for_flight",
+				queue="default",
+				job_name=f"flight_gate_sync|{self.name}",
+				flight_name=self.name,
+			)
 
 	def on_submit(self):
 		self.db_set("status", "Completed")
