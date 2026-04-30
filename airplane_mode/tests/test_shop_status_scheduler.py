@@ -66,6 +66,7 @@ class TestShopStatusScheduler(FrappeTestCase):
 				"doctype": "Shop",
 				"airport": ap.name,
 				"area": 10.0,
+				"floors": 1,
 				"shop_type": get_shop_type_for_tests(),
 				"status": "Occupied",
 			}
@@ -128,6 +129,7 @@ class TestShopStatusScheduler(FrappeTestCase):
 				"doctype": "Shop",
 				"airport": ap.name,
 				"area": 10.0,
+				"floors": 1,
 				"shop_type": get_shop_type_for_tests(),
 				"status": "Occupied",
 			}

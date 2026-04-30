@@ -17,11 +17,10 @@ class Shop(Document):
 		airport: DF.Link
 		airport_code: DF.Data | None
 		area: DF.Float
+		floors: DF.Int
 		is_published: DF.Check
-		route: DF.Data | None
 		shop_number: DF.Int
 		shop_type: DF.Link
 		status: DF.Literal["Available", "Occupied"]
-		title: DF.Data | None
 	# end: auto-generated types
 	pass

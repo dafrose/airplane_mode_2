@@ -13,6 +13,7 @@ def _new_shop_dict(airport: str, **fields):
 		"doctype": "Shop",
 		"airport": airport,
 		"area": 10.0,
+		"floors": 1,
 		"shop_type": get_shop_type_for_tests(),
 		**fields,
 	}

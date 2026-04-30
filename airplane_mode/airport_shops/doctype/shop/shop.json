@@ -13,13 +13,11 @@
   "column_break_fwsr",
   "shop_type",
   "area",
+  "floors",
   "section_break_zlwr",
   "status",
   "web_form_settings_section",
-  "is_published",
-  "route",
-  "column_break_vvlf",
-  "title"
+  "is_published"
  ],
  "fields": [
   {
@@ -96,33 +94,22 @@
    "label": "Web Form Settings"
   },
   {
-   "fieldname": "route",
-   "fieldtype": "Data",
-   "label": "Route"
-  },
-  {
-   "fieldname": "title",
-   "fieldtype": "Data",
-   "is_virtual": 1,
-   "label": "Title",
-   "options": "f\"{doc.name}, area: {doc.area} sqm, type: {doc.shop_type}\"",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_vvlf",
-   "fieldtype": "Column Break"
+   "fieldname": "floors",
+   "fieldtype": "Int",
+   "label": "Floors",
+   "non_negative": 1,
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "is_published_field": "is_published",
  "links": [
   {
    "link_doctype": "Shop Lease Contract",
    "link_fieldname": "shop"
   }
  ],
- "modified": "2026-04-29 10:45:52.018197",
+ "modified": "2026-04-30 12:54:30.379944",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Shop",
@@ -158,6 +145,5 @@
  "rows_threshold_for_grid_search": 20,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": [],
- "website_search_field": "shop_type"
+ "states": []
 }

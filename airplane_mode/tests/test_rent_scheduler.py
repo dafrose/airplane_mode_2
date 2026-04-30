@@ -43,6 +43,7 @@ def _make_lease_bundle(*, suffix: str) -> dict:
 			"doctype": "Shop",
 			"airport": ap.name,
 			"area": 42.0,
+			"floors": 1,
 			"shop_type": get_shop_type_for_tests(),
 		}
 	).insert(ignore_permissions=True)
