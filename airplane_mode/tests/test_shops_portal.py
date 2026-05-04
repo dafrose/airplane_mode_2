@@ -130,6 +130,14 @@ class TestShopsPortalContext(FrappeTestCase):
 			shop_lead_module._shop_lead_success_message(),
 		)
 
+	def test_shop_detail_airport_display(self):
+		sfx = frappe.generate_hash(length=6)
+		ap_name, shop_name = _make_airport_and_shop(suffix=f"d{sfx}", is_published=1)
+		code = frappe.db.get_value("Shop", shop_name, "airport_code")
+		ctx = frappe._dict()
+		build_shop_detail_context(ctx, shop_name=shop_name)
+		self.assertEqual(ctx.shop.airport_display, f"{code} - {ap_name}")
+
 	def test_shop_lead_page_context(self):
 		sfx = frappe.generate_hash(length=6)
 		_, name = _make_airport_and_shop(suffix=f"e{sfx}", is_published=1)

@@ -52,8 +52,6 @@ class ShopRentPayment(Document):
 	def _send_rent_payment_reminder_if_enabled(self) -> None:
 		if not frappe.db.get_single_value("Airport Shop Settings", "enable_rent_reminders"):
 			return
-		if not frappe.db.exists("Notification", RENT_PAYMENT_REMINDER_NOTIFICATION):
-			return
 		alert = frappe.get_doc("Notification", RENT_PAYMENT_REMINDER_NOTIFICATION)
 		if not alert.enabled or alert.document_type != self.doctype or alert.event != "Custom":
 			return
