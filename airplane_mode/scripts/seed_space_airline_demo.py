@@ -30,9 +30,9 @@ AIRLINES = [
 ]
 
 AIRPORTS = [
-	{"name": "VNS", "code": "VNS", "city": "Venus Cloud City", "country": "Venus"},
-	{"name": "CLP", "code": "CLP", "city": "Callisto Dome", "country": "Jupiter Orbit"},
-	{"name": "PHB", "code": "PHB", "city": "Phobos Tether", "country": "Mars Orbit"},
+	{"name": "Venus Spaceport", "code": "VNS", "city": "Venus Cloud City", "country": "Venus"},
+	{"name": "Callisto Landing Pad", "code": "CLP", "city": "Callisto Dome", "country": "Jupiter Orbit"},
+	{"name": "Phobos Space Terminal", "code": "PHB", "city": "Phobos Tether", "country": "Mars Orbit"},
 ]
 
 PASSENGERS = [

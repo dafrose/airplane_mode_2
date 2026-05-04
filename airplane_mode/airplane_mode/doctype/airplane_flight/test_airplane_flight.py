@@ -4,6 +4,7 @@
 from unittest.mock import patch
 
 import frappe
+from frappe.model.document import Document
 from frappe.tests.utils import FrappeTestCase
 
 from airplane_mode.airplane_mode.doctype.airplane_flight.airplane_flight import (
@@ -16,8 +17,6 @@ from airplane_mode.tests.helpers import (
 	create_test_passenger,
 	create_test_ticket,
 )
-
-test_dependencies = ["Airplane"]
 
 
 class TestAirplaneFlight(FrappeTestCase):
@@ -88,7 +87,6 @@ class TestAirplaneFlight(FrappeTestCase):
 			flight.save()
 
 		self.assertEqual(frappe.db.get_value("Airplane Ticket", ticket.name, "gate_number"), "Z9")
-		self.assertTrue(frappe.db.get_value("Airplane Ticket", ticket.name, "gate_number_changed_on"))
 
 	def test_sync_job_is_no_op_when_ticket_gate_already_matches_flight(self):
 		flight = create_test_flight(gate_number="P1")
@@ -97,9 +95,7 @@ class TestAirplaneFlight(FrappeTestCase):
 
 		sync_tickets_gate_for_flight(flight.name)
 
-		self.assertIsNone(frappe.db.get_value("Airplane Ticket", ticket.name, "gate_number_changed_on"))
-
-	def test_sync_job_updates_ticket_gate_and_stamp(self):
+	def test_sync_job_updates_ticket_gate(self):
 		flight = create_test_flight(gate_number="G1")
 		pax_user = "Administrator"
 		passenger = create_test_passenger(user=pax_user)
@@ -109,9 +105,7 @@ class TestAirplaneFlight(FrappeTestCase):
 		frappe.db.set_value("Airplane Flight", flight.name, "gate_number", "G9", update_modified=False)
 		sync_tickets_gate_for_flight(flight.name)
 
-		changed_on = frappe.db.get_value("Airplane Ticket", ticket.name, "gate_number_changed_on")
 		self.assertEqual(frappe.db.get_value("Airplane Ticket", ticket.name, "gate_number"), "G9")
-		self.assertTrue(changed_on)
 
 	def test_sync_job_skips_cancelled_tickets(self):
 		flight = create_test_flight(gate_number="G1")
@@ -124,7 +118,6 @@ class TestAirplaneFlight(FrappeTestCase):
 		sync_tickets_gate_for_flight(flight.name)
 
 		self.assertEqual(frappe.db.get_value("Airplane Ticket", ticket.name, "gate_number"), "G1")
-		self.assertIsNone(frappe.db.get_value("Airplane Ticket", ticket.name, "gate_number_changed_on"))
 
 	def test_sync_job_publishes_realtime_per_passenger_user(self):
 		flight = create_test_flight(gate_number="X1")
@@ -156,21 +149,15 @@ class TestAirplaneFlight(FrappeTestCase):
 		self.assertIn(BOOK_FLIGHT_WEB_FORM_ROUTE, msg["view_ticket_url"])
 		self.assertNotIn("/app/Form/", msg["view_ticket_url"])
 
-	def test_sync_job_creates_notification_log_for_passenger(self):
+	def test_sync_job_saves_tickets_so_desk_notifications_can_run(self):
 		flight = create_test_flight(gate_number="N1")
 		passenger = create_test_passenger(user="Administrator")
 		ticket = create_test_ticket(flight=flight.name, passenger=passenger)
 
 		frappe.db.set_value("Airplane Flight", flight.name, "gate_number", "N2", update_modified=False)
-		sync_tickets_gate_for_flight(flight.name)
 
-		self.assertTrue(
-			frappe.db.exists(
-				"Notification Log",
-				{
-					"for_user": "Administrator",
-					"document_type": "Airplane Ticket",
-					"document_name": ticket.name,
-				},
-			)
-		)
+		with patch.object(Document, "run_notifications") as mock_rn:
+			sync_tickets_gate_for_flight(flight.name)
+
+		self.assertGreater(mock_rn.call_count, 0)
+		self.assertEqual(frappe.db.get_value("Airplane Ticket", ticket.name, "gate_number"), "N2")

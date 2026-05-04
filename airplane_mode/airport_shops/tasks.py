@@ -67,12 +67,7 @@ def create_due_shop_rent_payments() -> None:
 	on new leases). Each period is one month; the next period starts the day after *Period End*.
 	*Next Due Date* is advanced on each payment `insert` (**Shop Rent Payment.after_insert**); when
 	the `while` loop finishes without `break`, this task runs one more `set_value` as a safeguard.
-	While **Airport Shop Settings**
-	*Enable Rent Reminders* is off, this function returns immediately.
 	"""
-	if not frappe.db.get_single_value("Airport Shop Settings", "enable_rent_reminders"):
-		return
-
 	today_d = getdate(today())
 	leases = frappe.get_all(
 		"Shop Lease Contract",

@@ -13,6 +13,7 @@ from airplane_mode.tests.helpers import (
 	create_test_flight,
 	create_test_passenger,
 	create_test_ticket,
+	ensure_standard_test_users,
 )
 
 SEAT_REGEX = re.compile(r"^[1-9][0-9]?[A-E]$")
@@ -103,6 +104,11 @@ class TestAirplaneTicket(FrappeTestCase):
 
 
 class TestAirplaneTicketPassengerPermissions(FrappeTestCase):
+	@classmethod
+	def setUpClass(cls):
+		super().setUpClass()
+		ensure_standard_test_users()
+
 	def setUp(self):
 		super().setUp()
 		frappe.set_user("Administrator")

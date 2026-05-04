@@ -117,7 +117,8 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "Due\nPaid"
+   "options": "Due\nPaid",
+   "read_only": 1
   },
   {
    "fieldname": "date_paid",
@@ -149,7 +150,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-04-28 09:17:25.255587",
+ "modified": "2026-05-04 10:23:21.555160",
  "modified_by": "Administrator",
  "module": "Airport Shops",
  "name": "Shop Rent Payment",

@@ -29,12 +29,14 @@ def build_shop_detail_context(context, shop_name: str | None = None) -> None:
 	row = frappe.db.get_value(
 		"Shop",
 		name,
-		["airport", "airport_code", "area", "shop_type", "status"],
+		["airport", "airport_code", "area", "floors", "shop_type", "status"],
 		as_dict=True,
 	)
 	row["name"] = name
-	context.shop = row
 	code = row.get("airport_code") or ""
+	airport_doc = row.get("airport") or ""
+	row["airport_display"] = f"{code} - {airport_doc}"
+	context.shop = row
 	context.page_title = f"{name} — {code}" if code else name
 	context.shop_lead_url = get_url(f"/{SHOP_LEAD_ROUTE}?shop={quote(name, safe='')}")
 

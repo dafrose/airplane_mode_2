@@ -42,6 +42,7 @@ def _make_airport_and_shop(*, suffix: str, is_published: int) -> tuple[str, str]
 			"doctype": "Shop",
 			"airport": ap.name,
 			"area": 25.5,
+			"floors": 2,
 			"shop_type": get_shop_type_for_tests(),
 			"is_published": is_published,
 		}
@@ -83,6 +84,7 @@ class TestShopsPortalContext(FrappeTestCase):
 		build_shop_detail_context(ctx, shop_name=name)
 		self.assertEqual(ctx.shop.name, name)
 		self.assertEqual(ctx.shop.area, 25.5)
+		self.assertEqual(ctx.shop.floors, 2)
 		self.assertIn(f"/{SHOP_LEAD_ROUTE}?shop=", ctx.shop_lead_url)
 
 	def test_is_shop_portal_visible(self):
@@ -127,6 +129,14 @@ class TestShopsPortalContext(FrappeTestCase):
 			ctx.web_form_doc["success_message"],
 			shop_lead_module._shop_lead_success_message(),
 		)
+
+	def test_shop_detail_airport_display(self):
+		sfx = frappe.generate_hash(length=6)
+		ap_name, shop_name = _make_airport_and_shop(suffix=f"d{sfx}", is_published=1)
+		code = frappe.db.get_value("Shop", shop_name, "airport_code")
+		ctx = frappe._dict()
+		build_shop_detail_context(ctx, shop_name=shop_name)
+		self.assertEqual(ctx.shop.airport_display, f"{code} - {ap_name}")
 
 	def test_shop_lead_page_context(self):
 		sfx = frappe.generate_hash(length=6)

@@ -68,7 +68,7 @@ class AirplaneTicket(Document):
 		flight: DF.Link
 		flight_price: DF.Currency
 		gate_number: DF.ReadOnly | None
-		gate_number_changed_on: DF.Datetime | None
+		linked_user: DF.Link | None
 		passenger: DF.Link
 		seat: DF.Data | None
 		source_airport_code: DF.ReadOnly

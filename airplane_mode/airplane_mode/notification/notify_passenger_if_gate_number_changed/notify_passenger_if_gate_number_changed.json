@@ -1,0 +1,33 @@
+{
+ "attach_files": "",
+ "attach_print": 0,
+ "channel": "Email",
+ "creation": "2026-04-30 09:52:07.098674",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Airplane Ticket",
+ "enabled": 1,
+ "event": "Value Change",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "<p>Dear Passenger,</p>\n<p>The Gate number of your ticket {{ doc.name }} has changed.</p>\n<p>Your new gate number is {{ doc.gate_number }}.</p>\n<p>Enjoy your flight!</p>\n\n\n\n",
+ "message_type": "Markdown",
+ "modified": "2026-04-30 10:04:37.251591",
+ "modified_by": "Administrator",
+ "module": "Airplane Mode",
+ "name": "Notify Passenger if Gate Number Changed",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_document_field": "linked_user",
+   "receiver_by_role": ""
+  }
+ ],
+ "send_system_notification": 1,
+ "send_to_all_assignees": 0,
+ "sender": "Airport Manager",
+ "sender_email": "airport@manager.com",
+ "subject": "Gate number changed for ticket {{ doc.name }}",
+ "value_changed": "gate_number"
+}

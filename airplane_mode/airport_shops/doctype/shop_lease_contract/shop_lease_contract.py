@@ -3,7 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
-from frappe.utils import getdate, today
+from frappe.utils import flt, getdate, today
 
 
 class ShopLeaseContract(Document):
@@ -19,26 +19,82 @@ class ShopLeaseContract(Document):
 		lease_expiry_date: DF.Date | None
 		lease_start_date: DF.Date
 		next_due_date: DF.Date | None
+		public_shop_name: DF.Data | None
 		rent: DF.Currency
 		shop: DF.Link
 		tenant: DF.Link
 	# end: auto-generated types
 
 	def before_insert(self):
-		# First row only: *Lease Start Date* is mandatory; *Next Due Date* seeds the rolling schedule.
-		self.next_due_date = self.lease_start_date
+		self._apply_default_rent_if_missing()
 
-	def validate(self):
-		# Set shop status to Occupied when contract is created
-		# Shop is mandatory, do not check for existence
-		status = self._shop_status_from_lease()
-		frappe.db.set_value("Shop", self.shop, "status", status, update_modified=False)
+	def before_save(self):
+		if self.has_value_changed("lease_start_date"):
+			self.next_due_date = self.lease_start_date
+
+	def after_insert(self):
+		self._sync_shop_status_for_lease_dates()
+
+	def on_update(self):
+		if self.has_value_changed("lease_start_date") or self.has_value_changed("lease_expiry_date"):
+			self._sync_shop_status_for_lease_dates()
 
 	def on_trash(self):
-		# Set shop status to Available when contract is deleted
-		# Shop is mandatory, do not check for existence
-		frappe.db.set_value("Shop", self.shop, "status", "Available", update_modified=False)
+		recalculate_shop_status_from_leases(self.shop, ignore_contract=self.name)
 
-	def _shop_status_from_lease(self) -> str:
-		lease_expired = self.lease_expiry_date and getdate(self.lease_expiry_date) <= getdate(today())
-		return "Available" if lease_expired else "Occupied"
+	def _apply_default_rent_if_missing(self) -> None:
+		if flt(self.rent) > 0:
+			return
+		default = frappe.db.get_single_value("Airport Shop Settings", "default_rent_amount")
+		if default is not None:
+			self.rent = default
+
+	def _sync_shop_status_for_lease_dates(self) -> None:
+		if _lease_row_covers_today(self):
+			frappe.db.set_value("Shop", self.shop, "status", "Occupied", update_modified=False)
+		else:
+			_enqueue_recalculate_shop_status(self.shop)
+
+
+def _lease_row_covers_today(doc: Document) -> bool:
+	today_date = getdate(today())
+	if doc.lease_expiry_date:
+		return getdate(doc.lease_start_date) <= today_date < getdate(doc.lease_expiry_date)
+	else:
+		return getdate(doc.lease_start_date) <= today_date
+
+
+def _enqueue_recalculate_shop_status(shop: str) -> None:
+	method = "airplane_mode.airport_shops.doctype.shop_lease_contract.shop_lease_contract.recalculate_shop_status_from_leases"
+	if frappe.flags.in_test:
+		recalculate_shop_status_from_leases(shop)
+		return
+	frappe.enqueue(
+		method,
+		queue="default",
+		job_name=f"recalculate_shop_status|{shop}",
+		shop=shop,
+	)
+
+
+def recalculate_shop_status_from_leases(shop: str, ignore_contract: str | None = None) -> None:
+	has_active_lease = False
+	for row in frappe.get_all(
+		"Shop Lease Contract",
+		filters={"shop": shop},
+		pluck="name",
+	):
+		if ignore_contract and row == ignore_contract:
+			continue
+
+		lease = frappe.get_doc("Shop Lease Contract", row)
+		if _lease_row_covers_today(lease):
+			has_active_lease = True
+			break
+	frappe.db.set_value(
+		"Shop",
+		shop,
+		"status",
+		"Occupied" if has_active_lease else "Available",
+		update_modified=False,
+	)
