@@ -196,6 +196,7 @@ def seed() -> None:
 		).insert(ignore_permissions=True)
 		lead_count += 1
 
+	# nosemgrep: frappe-semgrep-rules.rules.frappe-manual-commit
 	frappe.db.commit()
 	frappe.msgprint(
 		_(
